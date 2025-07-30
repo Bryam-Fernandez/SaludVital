@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Médico</title></head>
+<body>
+<h2>Registrar Médico</h2>
+
+<form th:action="@{/medicos/guardar}" th:object="${medico}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <label>Nombre:</label>
+    <input type="text" th:field="*{nombre}" /><br><br>
+
+    <label>Especialidad:</label>
+    <input type="text" th:field="*{especialidad}" /><br><br>
+
+    <label>Horario de Atención:</label>
+    <input type="text" th:field="*{horarioAtencion}" /><br><br>
+
+    <button type="submit">Guardar</button>
+</form>
+
+<a th:href="@{/medicos}">Volver</a>
+</body>
+</html>

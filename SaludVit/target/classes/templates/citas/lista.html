@@ -1,0 +1,40 @@
+<!-- src/main/resources/templates/citas/lista.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Listado de Citas</title>
+<meta charset="UTF-8" />
+</head>
+<body>
+	<h2>Listado de Citas</h2>
+
+	<a th:href="@{/citas/nueva}">Programar Nueva Cita</a>
+
+	<table border="1">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Paciente</th>
+				<th>Médico</th>
+				<th>Especialidad</th>
+				<th>Fecha y Hora</th>
+				<th>Motivo</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="cita : ${listaCitas}">
+				<td th:text="${cita.id}">1</td>
+				<!-- En la vista de citas -->
+				<td th:text="${cita.medico.nombre}">Nombre Médico</td>
+				<td	th:text="${cita.paciente.nombres + ' ' + cita.paciente.apellidos}"></td>
+				<td th:text="${cita.medico.especialidad}">Cardiología</td>
+				<td th:text="${#temporals.format(cita.fechaHora, 'yyyy-MM-dd HH:mm')}">
+				<td th:text="${cita.motivo}">Consulta general</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a th:href="@{/medicos/nuevo}">Registrar nuevo médico</a>
+
+</body>
+</html>

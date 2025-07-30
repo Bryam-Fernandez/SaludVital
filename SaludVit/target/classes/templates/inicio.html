@@ -1,0 +1,12 @@
+<!-- templates/inicio.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: body">
+<body>
+    <h1>Bienvenido a Salud Vital</h1>
+    <ul>
+        <li><a th:href="@{/pacientes}">Gestión de Pacientes</a></li>
+        <li><a th:href="@{/citas}">Gestión de Citas</a></li>
+        <li><a th:href="@{/medicos}">Gestión de Médicos</a></li>
+    </ul>
+</body>
+</html>

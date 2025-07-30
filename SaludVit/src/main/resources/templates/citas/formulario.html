@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva Cita</title>
+</head>
+<body>
+    <h1>Registrar Nueva Cita</h1>
+
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+
+   <form th:action="@{/citas/guardar}" th:object="${cita}" method="post">
+
+    <label>Paciente:</label>
+    <select th:field="*{paciente}">
+        <option th:each="p : ${pacientes}" th:value="${p.id}" th:text="${p.nombres}"></option>
+    </select>
+
+    <label>Médico:</label>
+    <select th:field="*{medico}">
+        <option th:each="m : ${medicos}" th:value="${m.id}" th:text="${m.nombre}"></option>
+    </select>
+
+    <label>Fecha y hora:</label>
+    <input type="datetime-local" th:field="*{fechaHora}" required />
+
+    <label>Motivo:</label>
+    <input type="text" th:field="*{motivo}" required />
+
+    <button type="submit">Guardar</button>
+</form>
+
+
+    <a th:href="@{/citas}">Volver a la lista de citas</a>
+</body>
+</html>

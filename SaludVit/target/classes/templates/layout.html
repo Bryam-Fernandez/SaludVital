@@ -1,0 +1,29 @@
+<!-- templates/layout.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Salud Vital</title>
+</head>
+<body>
+    <header>
+        <h1>Centro de Salud Vital</h1>
+        <nav>
+            <a th:href="@{/}">Inicio</a> |
+            <a th:href="@{/pacientes}">Pacientes</a> |
+            <a th:href="@{/citas}">Citas</a> |
+            <a th:href="@{/medicos}">Médicos</a>
+        </nav>
+        <hr/>
+    </header>
+
+    <div th:fragment="body">
+        <!-- Aquí se carga el contenido de cada vista -->
+    </div>
+
+    <footer>
+        <hr/>
+        <p>© 2025 Salud Vital</p>
+    </footer>
+</body>
+</html>
