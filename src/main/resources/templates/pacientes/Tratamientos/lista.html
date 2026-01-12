@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Tratamientos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tratamiento-card {
+            border-left: 4px solid #007bff;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .tratamiento-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .badge-estado {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        .badge-activo { background-color: #28a745; color: white; }
+        .badge-completado { background-color: #6c757d; color: white; }
+        .badge-suspendido { background-color: #ffc107; color: black; }
+        .badge-cancelado { background-color: #dc3545; color: white; }
+        
+        .stats-card {
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+        .stats-total { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stats-activos { background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); }
+        .stats-completados { background: linear-gradient(135deg, #6c757d 0%, #495057 100%); }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/pacientes/panel}">
+                <i class="fas fa-arrow-left"></i> Volver al Panel
+            </a>
+            <span class="navbar-text text-white">
+                <i class="fas fa-file-medical"></i> Mis Tratamientos Médicos
+            </span>
+            <div class="navbar-nav">
+                <a th:href="@{/citas/nueva}" class="nav-link text-white">
+                    <i class="fas fa-calendar-plus"></i> Nueva Cita
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stats-card stats-total">
+                    <h3 th:text="${tratamientos != null ? tratamientos.size() : 0}">0</h3>
+                    <p>Tratamientos Totales</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card stats-activos">
+                    <h3 th:text="${tratamientos != null ? tratamientos.?[estado.name() == 'ACTIVO'].size() : 0}">0</h3>
+                    <p>Tratamientos Activos</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-card stats-completados">
+                    <h3 th:text="${tratamientos != null ? tratamientos.?[estado.name() == 'COMPLETADO'].size() : 0}">0</h3>
+                    <p>Tratamientos Completados</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card principal -->
+        <div class="card">
+            <div class="card-header bg-white border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list"></i> Lista de Tratamientos
+                    </h4>
+                    
+                    <!-- Filtros -->
+                    <form method="get" action="" class="d-flex">
+                        <select name="estado" class="form-select me-2" style="width: auto;">
+                            <option value="">Todos los estados</option>
+                            <option th:each="estadoItem : ${estadosTratamiento}" 
+                                    th:value="${estadoItem}" 
+                                    th:text="${estadoItem}"
+                                    th:selected="${estado == estadoItem}">
+                            </option>
+                        </select>
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                        <a th:href="@{/tratamientos/paciente/mis-tratamientos}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Limpiar
+                        </a>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <!-- Sin tratamientos -->
+                <div th:if="${tratamientos == null or tratamientos.isEmpty()}">
+                    <div class="alert alert-info text-center py-5">
+                        <i class="fas fa-info-circle fa-3x mb-3 text-primary"></i>
+                        <h4>No hay tratamientos registrados</h4>
+                        <p class="mb-4">No tienes tratamientos médicos en este momento.</p>
+                        <p class="text-muted">Consulta con tu médico para obtener un tratamiento personalizado.</p>
+                        <a th:href="@{/citas/nueva}" class="btn btn-primary mt-3">
+                            <i class="fas fa-calendar-plus"></i> Agendar Cita Médica
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Con tratamientos -->
+                <div th:unless="${tratamientos == null or tratamientos.isEmpty()}">
+                    <div class="row">
+                        <div th:each="tratamiento : ${tratamientos}" class="col-md-6 mb-3">
+                            <div class="tratamiento-card card h-100">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-stethoscope text-primary"></i>
+                                            Tratamiento #<span th:text="${tratamiento.id}"></span>
+                                        </h5>
+                                        <small class="text-muted">
+                                            <i class="fas fa-user-md"></i>
+                                            <span th:text="${tratamiento.medico.nombre + ' ' + tratamiento.medico.apellido}"></span>
+                                        </small>
+                                    </div>
+                                    <span th:switch="${tratamiento.estado}" class="badge-estado">
+                                        <span th:case="ACTIVO" class="badge-activo">
+                                            <i class="fas fa-play-circle"></i> Activo
+                                        </span>
+                                        <span th:case="COMPLETADO" class="badge-completado">
+                                            <i class="fas fa-check-circle"></i> Completado
+                                        </span>
+                                        <span th:case="SUSPENDIDO" class="badge-suspendido">
+                                            <i class="fas fa-pause-circle"></i> Suspendido
+                                        </span>
+                                        <span th:case="CANCELADO" class="badge-cancelado">
+                                            <i class="fas fa-times-circle"></i> Cancelado
+                                        </span>
+                                    </span>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <!-- Diagnóstico -->
+                                    <h6 class="text-primary">
+                                        <i class="fas fa-diagnoses"></i> Diagnóstico:
+                                    </h6>
+                                    <p th:text="${tratamiento.diagnostico}" class="mb-3 ps-3"></p>
+                                    
+                                    <!-- Fechas -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <h6 class="text-primary">
+                                                <i class="fas fa-calendar-alt"></i> Inicio:
+                                            </h6>
+                                            <p class="ps-3">
+                                                <span th:text="${#temporals.format(tratamiento.fechaInicio, 'dd/MM/yyyy')}"></span>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6" th:if="${tratamiento.fechaFin != null}">
+                                            <h6 class="text-primary">
+                                                <i class="fas fa-calendar-check"></i> Fin:
+                                            </h6>
+                                            <p class="ps-3">
+                                                <span th:text="${#temporals.format(tratamiento.fechaFin, 'dd/MM/yyyy')}"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Plan de tratamiento (resumen) -->
+                                    <div th:if="${tratamiento.planTratamiento != null and tratamiento.planTratamiento.length() > 0}">
+                                        <h6 class="text-primary">
+                                            <i class="fas fa-clipboard-list"></i> Plan:
+                                        </h6>
+                                        <p class="mb-3 ps-3 text-truncate" 
+                                           th:title="${tratamiento.planTratamiento}"
+                                           th:text="${#strings.abbreviate(tratamiento.planTratamiento, 100)}">
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Botones de acción -->
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <a th:href="@{'/tratamientos/' + ${tratamiento.id}}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye"></i> Ver Detalles
+                                        </a>
+                                        <a th:href="@{'/citas/' + ${tratamiento.cita.id}}" 
+                                           class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-calendar"></i> Ver Cita
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-footer bg-transparent border-top-0">
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i>
+                                        Creado: <span th:text="${#temporals.format(tratamiento.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tratamiento activo destacado -->
+        <div th:if="${tratamientoActivo != null}" class="mt-4">
+            <div class="alert alert-success border-success">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-star fa-2x"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-bullhorn"></i> ¡Tratamiento Activo Actual!
+                        </h5>
+                        <p class="mb-1">
+                            <strong>Diagnóstico:</strong> 
+                            <span th:text="${tratamientoActivo.diagnostico}"></span>
+                        </p>
+                        <p class="mb-1">
+                            <strong>Médico:</strong> 
+                            <span th:text="${tratamientoActivo.medico.nombre + ' ' + tratamientoActivo.medico.apellido}"></span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>Iniciado:</strong> 
+                            <span th:text="${#temporals.format(tratamientoActivo.fechaInicio, 'dd/MM/yyyy')}"></span>
+                        </p>
+                        <a th:href="@{'/tratamientos/' + ${tratamientoActivo.id}}" 
+                           class="btn btn-success">
+                            <i class="fas fa-external-link-alt"></i> Ver Tratamiento Activo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volver al panel -->
+        <div class="mt-4 text-center">
+            <a th:href="@{/pacientes/panel}" class="btn btn-secondary me-2">
+                <i class="fas fa-arrow-left"></i> Volver al Panel
+            </a>
+            <a th:href="@{/citas/nueva}" class="btn btn-primary">
+                <i class="fas fa-calendar-plus"></i> Nueva Cita Médica
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-3 bg-light border-top">
+        <div class="container text-center">
+            <p class="mb-0 text-muted">
+                <i class="fas fa-heartbeat text-danger"></i> 
+                Sistema de Salud - Panel de Paciente &copy; 2025
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Resaltar tratamiento activo
+        document.addEventListener('DOMContentLoaded', function() {
+            const tratamientoActivo = document.querySelector('.badge-activo');
+            if (tratamientoActivo) {
+                tratamientoActivo.closest('.tratamiento-card').classList.add('border-success');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes - Salud Vital</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0077cc;
+            --secondary-blue: #00bcd4;
+            --accent-blue: #0059ff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #2c3e50;
+            --success-green: #28a745;
+            --warning-yellow: #ffc107;
+            --danger-red: #dc3545;
+            --purple: #6f42c1;
+            --teal: #20c997;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f5f8fa;
+            color: #333;
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Navbar Mejorada */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navbar-brand i {
+            font-size: 1.8rem;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .logout-link {
+            color: #ffeb3b !important;
+            border: 1px solid rgba(255, 235, 59, 0.3);
+            padding: 0.5rem 1rem !important;
+        }
+        
+        .logout-link:hover {
+            background-color: rgba(255, 235, 59, 0.1);
+        }
+        
+        /* Main Container */
+        .main-container {
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
+        }
+        
+        /* Header Card */
+        .header-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid var(--primary-blue);
+        }
+        
+        .header-title {
+            color: var(--dark-gray);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(0, 119, 204, 0.1) 0%, rgba(0, 89, 255, 0.1) 100%);
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        
+        .doctor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* Search Section */
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.1);
+            outline: none;
+        }
+        
+        .search-btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 119, 204, 0.2);
+        }
+        
+        .clear-btn {
+            padding: 0.75rem 2rem;
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .clear-btn:hover {
+            background: rgba(0, 119, 204, 0.1);
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .stat-icon.patients {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+        }
+        
+        .stat-icon.appointments {
+            background: linear-gradient(135deg, var(--success-green) 0%, #1b5e20 100%);
+        }
+        
+        .stat-icon.allergies {
+            background: linear-gradient(135deg, var(--warning-yellow) 0%, #ff8f00 100%);
+        }
+        
+        .stat-icon.records {
+            background: linear-gradient(135deg, var(--purple) 0%, #6a1b9a 100%);
+        }
+        
+        .stat-info {
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* Patients Table */
+        .patients-table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin: 0;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(0, 119, 204, 0.1);
+        }
+        
+        .export-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--success-green) 0%, #1b5e20 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+        
+        .patients-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .patients-table thead {
+            background-color: #f8f9fa;
+        }
+        
+        .patients-table th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-gray);
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+        
+        .patients-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+        
+        .patients-table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .patients-table tbody tr:hover {
+            background-color: rgba(0, 119, 204, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .patient-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .patient-name {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+        
+        .patient-id {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        
+        .allergy-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .allergy-yes {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: var(--warning-yellow);
+        }
+        
+        .allergy-no {
+            background-color: rgba(40, 167, 69, 0.15);
+            color: var(--success-green);
+        }
+        
+        .allergy-list {
+            max-width: 250px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .appointments-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.4rem 0.8rem;
+            background: rgba(0, 119, 204, 0.1);
+            color: var(--primary-blue);
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .action-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .action-btn.view {
+            background: rgba(0, 119, 204, 0.1);
+            border-color: transparent;
+        }
+        
+        .action-btn.record {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success-green);
+            border-color: transparent;
+        }
+        
+        .action-btn.appointment {
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--warning-yellow);
+            border-color: transparent;
+        }
+        
+        /* Filters Dropdown */
+        .filters-dropdown {
+            position: relative;
+        }
+        
+        .filters-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            min-width: 250px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .filters-menu.show {
+            display: block;
+        }
+        
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+        
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .no-results-icon {
+            font-size: 3rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+        
+        /* Footer */
+        .page-footer {
+            background-color: var(--dark-gray);
+            color: white;
+            padding: 2rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-logo-icon {
+            font-size: 1.8rem;
+            color: var(--secondary-blue);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .patients-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .table-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links {
+                justify-content: center;
+            }
+            
+            .patients-table th,
+            .patients-table td {
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-btn, .export-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0059b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Mejorada -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/medico/panel}">
+                <i class="bi bi-heart-pulse"></i>
+                Salud Vital
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/medico/panel}">
+                            <i class="bi bi-speedometer2"></i>
+                            Panel Principal
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/medico/pacientes}">
+                            <i class="bi bi-people-fill"></i>
+                            Mis Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/expedientes}">
+                            <i class="bi bi-folder-fill"></i>
+                            Expedientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/citas}">
+                            <i class="bi bi-calendar-check"></i>
+                            Citas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-file-earmark-medical"></i>
+                            Informes
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <div class="doctor-mini-info text-white me-3">
+                        <small>Médico:</small>
+                        <div class="fw-bold" th:text="${medicoNombre}">Dr. Juan Pérez</div>
+                    </div>
+                    <a class="nav-link logout-link" th:href="@{/logout}">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="container">
+            <!-- Header -->
+            <div class="header-card fade-in">
+                <h1 class="header-title">
+                    <i class="bi bi-people-fill" style="color: var(--primary-blue);"></i>
+                    Gestión de Pacientes
+                </h1>
+                <p class="header-subtitle">
+                    Administra y consulta la información de tus pacientes de forma rápida y eficiente
+                </p>
+                
+                <div class="doctor-info">
+                    <div class="doctor-avatar" th:text="${#strings.substring(medicoNombre, 0, 1)}">D</div>
+                    <div>
+                        <div class="fw-bold" th:text="${medicoNombre}">Dr. Juan Pérez</div>
+                        <small class="text-muted">Especialista en Medicina General</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card fade-in">
+                    <div class="stat-icon patients">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalPatients" th:text="${#lists.size(pacientes)}">0</div>
+                        <div class="stat-label">Pacientes Totales</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in">
+                    <div class="stat-icon appointments">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalAppointments">0</div>
+                        <div class="stat-label">Citas Hoy</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in">
+                    <div class="stat-icon allergies">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="allergyPatients">0</div>
+                        <div class="stat-label">Con Alergias</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card fade-in">
+                    <div class="stat-icon records">
+                        <i class="bi bi-file-earmark-medical"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="newPatients">0</div>
+                        <div class="stat-label">Nuevos (30 días)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Search Section -->
+            <div class="search-section fade-in">
+                <form method="get" th:action="@{/medico/pacientes}" class="search-form" id="searchForm">
+                    <input type="text" name="q" th:value="${q}" 
+                           class="search-input" placeholder="Buscar por nombre, apellido o documento..." 
+                           id="searchInput">
+                    <button type="submit" class="search-btn">
+                        <i class="bi bi-search"></i>
+                        Buscar Paciente
+                    </button>
+                    <button type="button" class="clear-btn" onclick="clearSearch()">
+                        <i class="bi bi-x-circle"></i>
+                        Limpiar Filtros
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Cargando pacientes...</p>
+            </div>
+            
+            <!-- Patients Table -->
+            <div class="patients-table-container fade-in" id="patientsTable">
+                <div class="table-header">
+                    <h3 class="table-title">Lista de Pacientes</h3>
+                    <div class="table-actions">
+                        <div class="filters-dropdown">
+                            <button class="filter-btn" onclick="toggleFilters()">
+                                <i class="bi bi-funnel"></i>
+                                Filtros
+                            </button>
+                            <div class="filters-menu" id="filtersMenu">
+                                <div class="filter-group">
+                                    <label>Estado de Alergias</label>
+                                    <select class="form-select" id="allergyFilter">
+                                        <option value="all">Todos</option>
+                                        <option value="with">Con Alergias</option>
+                                        <option value="without">Sin Alergias</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label>Ordenar por</label>
+                                    <select class="form-select" id="sortFilter">
+                                        <option value="name">Nombre A-Z</option>
+                                        <option value="name-desc">Nombre Z-A</option>
+                                        <option value="recent">Más Recientes</option>
+                                        <option value="oldest">Más Antiguos</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary w-100 mt-2" onclick="applyFilters()">
+                                    Aplicar Filtros
+                                </button>
+                            </div>
+                        </div>
+                        <button class="export-btn" onclick="exportPatients()">
+                            <i class="bi bi-download"></i>
+                            Exportar Lista
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Información</th>
+                                <th>Alergias</th>
+                                <th>Citas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientsTableBody">
+                            <tr th:each="p, i : ${pacientes}" class="fade-in patient-row">
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="patient-avatar" 
+                                             th:text="${#strings.substring(p.nombres, 0, 1) + #strings.substring(p.apellidos, 0, 1)}">
+                                            PV
+                                        </div>
+                                        <div>
+                                            <div class="patient-name" th:text="${p.nombres + ' ' + p.apellidos}">
+                                                Nombre Paciente
+                                            </div>
+                                            <div class="patient-id" th:text="ID: ${p.id}">
+                                                ID: P-001
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <div><strong>Documento:</strong> 
+                                            <span th:text="${p.documento != null ? p.documento : p.numeroIdentificacion}">
+                                                DOC-001
+                                            </span>
+                                        </div>
+                                        <div><strong>Nacimiento:</strong> 
+                                            <span th:text="${p.fechaNacimiento}">01/01/1990</span>
+                                            <span th:if="${p.edad}" th:text="'(' + ${p.edad} + ' años)'">(35 años)</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-2">
+                                        <span th:if="${p.tieneAlergias}" class="allergy-badge allergy-yes">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            Sí tiene alergias
+                                        </span>
+                                        <span th:unless="${p.tieneAlergias}" class="allergy-badge allergy-no">
+                                            <i class="bi bi-check-circle"></i>
+                                            Sin alergias
+                                        </span>
+                                        <div th:if="${p.listaAlergias and !#strings.isEmpty(p.listaAlergias)}" 
+                                             class="allergy-list" title="Lista de alergias">
+                                            <small><strong>Alergias:</strong> 
+                                                <span th:text="${p.listaAlergias}">Penicilina, Mariscos</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="appointments-count" th:title="${#lists.size(p.citas)} + ' citas registradas'">
+                                        <i class="bi bi-calendar3"></i>
+                                        <span th:text="${#lists.size(p.citas)}">0</span> citas
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a class="action-btn record" th:href="@{'/expedientes/' + ${p.id}}">
+                                            <i class="bi bi-file-earmark-medical"></i>
+                                            Expediente
+                                        </a>
+                                        <button class="action-btn view" onclick="viewPatientDetails('${p.id}')">
+                                            <i class="bi bi-eye"></i>
+                                            Ver
+                                        </button>
+                                        <button class="action-btn appointment" onclick="scheduleAppointment('${p.id}')">
+                                            <i class="bi bi-calendar-plus"></i>
+                                            Cita
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- No Results -->
+                            <tr th:if="${#lists.isEmpty(pacientes)}" id="noResultsRow">
+                                <td colspan="5">
+                                    <div class="no-results">
+                                        <div class="no-results-icon">
+                                            <i class="bi bi-person-x"></i>
+                                        </div>
+                                        <h4>No se encontraron pacientes</h4>
+                                        <p>Intenta con otros términos de búsqueda o agrega nuevos pacientes.</p>
+                                        <button class="search-btn" onclick="clearSearch()">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                            Ver Todos los Pacientes
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="bi bi-heart-pulse footer-logo-icon"></i>
+                    <div>
+                        <h4 class="mb-0">Salud Vital</h4>
+                        <small>Panel Médico</small>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#">Soporte</a>
+                    <a href="#">Contacto</a>
+                    <a href="#">Privacidad</a>
+                    <a href="#">Ayuda</a>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 Centro de Salud Vital. Sistema de Gestión Médica. v2.1</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animar contadores
+            animateCounter('totalPatients', document.getElementById('totalPatients').textContent || 0);
+            
+            // Calcular estadísticas
+            calculateStats();
+            
+            // Agregar animaciones
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Inicializar búsqueda en tiempo real
+            initializeRealTimeSearch();
+        });
+        
+        // Calcular estadísticas
+        function calculateStats() {
+            const patients = document.querySelectorAll('.patient-row');
+            let totalAppointments = 0;
+            let allergyPatients = 0;
+            let newPatients = 0;
+            
+            patients.forEach(patient => {
+                // Contar citas
+                const appointmentsElement = patient.querySelector('.appointments-count span');
+                if (appointmentsElement) {
+                    totalAppointments += parseInt(appointmentsElement.textContent) || 0;
+                }
+                
+                // Contar pacientes con alergias
+                const hasAllergies = patient.querySelector('.allergy-yes');
+                if (hasAllergies) {
+                    allergyPatients++;
+                }
+                
+                // Contar pacientes nuevos (simulado - en producción usarías fechas reales)
+                if (Math.random() > 0.7) newPatients++;
+            });
+            
+            // Actualizar contadores
+            animateCounter('totalAppointments', totalAppointments);
+            animateCounter('allergyPatients', allergyPatients);
+            animateCounter('newPatients', newPatients);
+        }
+        
+        // Animación de contadores
+        function animateCounter(elementId, target) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let current = 0;
+            const targetValue = parseInt(target);
+            if (isNaN(targetValue)) return;
+            
+            const increment = targetValue / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetValue) {
+                    element.textContent = targetValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 30);
+        }
+        
+        // Funciones de acción
+        function viewPatientDetails(patientId) {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                // Aquí normalmente redirigirías a una página de detalles
+                alert(`Ver detalles del paciente ID: ${patientId}\nRedirigiendo a página de detalles...`);
+                // window.location.href = `/medico/pacientes/${patientId}`;
+            }, 500);
+        }
+        
+        function scheduleAppointment(patientId) {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                alert(`Agendar cita para paciente ID: ${patientId}\nRedirigiendo al formulario de citas...`);
+                // window.location.href = `/citas/nueva?pacienteId=${patientId}`;
+            }, 500);
+        }
+        
+        function exportPatients() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                alert('Exportando lista de pacientes a Excel...');
+                // Aquí implementarías la lógica real de exportación
+            }, 1000);
+        }
+        
+        // Filtros
+        function toggleFilters() {
+            const menu = document.getElementById('filtersMenu');
+            menu.classList.toggle('show');
+        }
+        
+        function applyFilters() {
+            showLoading();
+            
+            const allergyFilter = document.getElementById('allergyFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+            
+            setTimeout(() => {
+                // Aquí implementarías la lógica real de filtrado
+                // Por ahora, solo simulamos el filtrado
+                const rows = document.querySelectorAll('.patient-row');
+                rows.forEach(row => {
+                    const hasAllergies = row.querySelector('.allergy-yes');
+                    
+                    if (allergyFilter === 'with' && !hasAllergies) {
+                        row.style.display = 'none';
+                    } else if (allergyFilter === 'without' && hasAllergies) {
+                        row.style.display = 'none';
+                    } else {
+                        row.style.display = '';
+                    }
+                });
+                
+                // Actualizar contadores
+                calculateStats();
+                hideLoading();
+                
+                // Cerrar menú de filtros
+                document.getElementById('filtersMenu').classList.remove('show');
+            }, 500);
+        }
+        
+        // Búsqueda en tiempo real
+        function initializeRealTimeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+            
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    filterTable(this.value);
+                }, 300);
+            });
+        }
+        
+        function filterTable(searchTerm) {
+            const searchTermLower = searchTerm.toLowerCase();
+            const rows = document.querySelectorAll('.patient-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTermLower)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Mostrar/ocultar mensaje de no resultados
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (visibleCount === 0) {
+                if (!noResultsRow) {
+                    createNoResultsMessage();
+                }
+            } else if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+            
+            // Actualizar contador de pacientes
+            document.getElementById('totalPatients').textContent = visibleCount;
+        }
+        
+        function createNoResultsMessage() {
+            const tbody = document.getElementById('patientsTableBody');
+            const newRow = document.createElement('tr');
+            newRow.id = 'noResultsRow';
+            newRow.innerHTML = `
+                <td colspan="5">
+                    <div class="no-results">
+                        <div class="no-results-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h4>No se encontraron pacientes</h4>
+                        <p>No hay pacientes que coincidan con tu búsqueda.</p>
+                        <button class="search-btn" onclick="clearSearch()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Limpiar búsqueda
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+        }
+        
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchForm = document.getElementById('searchForm');
+            
+            if (searchInput) searchInput.value = '';
+            if (searchForm) searchForm.reset();
+            
+            // Resetear filtros
+            document.getElementById('allergyFilter').value = 'all';
+            document.getElementById('sortFilter').value = 'name';
+            
+            // Mostrar todos los pacientes
+            const rows = document.querySelectorAll('.patient-row');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+            
+            // Ocultar mensaje de no resultados
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (noResultsRow) noResultsRow.style.display = 'none';
+            
+            // Actualizar contador
+            document.getElementById('totalPatients').textContent = rows.length;
+            calculateStats();
+        }
+        
+        // Funciones de loading
+        function showLoading() {
+            const spinner = document.getElementById('loadingSpinner');
+            const table = document.getElementById('patientsTable');
+            if (spinner) spinner.style.display = 'block';
+            if (table) table.style.opacity = '0.5';
+        }
+        
+        function hideLoading() {
+            const spinner = document.getElementById('loadingSpinner');
+            const table = document.getElementById('patientsTable');
+            if (spinner) spinner.style.display = 'none';
+            if (table) table.style.opacity = '1';
+        }
+        
+        // Cerrar menú de filtros al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const filtersMenu = document.getElementById('filtersMenu');
+            const filterBtn = document.querySelector('.filter-btn');
+            
+            if (filtersMenu && filterBtn && 
+                !filtersMenu.contains(event.target) && 
+                !filterBtn.contains(event.target)) {
+                filtersMenu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

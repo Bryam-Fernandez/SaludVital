@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contáctanos - SaludVit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        .contact-banner {
+            background: url('/img/contacto-banner.png') center center / cover no-repeat;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+
+        .contact-banner::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 172, 193, 0.6); /* Turquesa con opacidad */
+        }
+
+        .contact-banner h1 {
+            position: relative;
+            z-index: 1;
+            font-size: 2.8rem;
+            font-weight: bold;
+        }
+
+        .contact-box {
+            background-color: white;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .contact-box i {
+            font-size: 1.5rem;
+            color: #00bcd4;
+            margin-right: 15px;
+        }
+
+        .social-icons i {
+            font-size: 1.5rem;
+            color: #00bcd4;
+            margin-right: 15px;
+            transition: transform 0.2s ease;
+        }
+
+        .social-icons i:hover {
+            transform: scale(1.2);
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+        <!-- LOGO -->
+        <a class="navbar-brand fw-bold text-info d-flex align-items-center" href="/">
+            <img src="/img/logo.png" alt="SaludVit" width="40" class="me-2">
+            SaludVit
+        </a>
+
+        <!-- TOGGLER -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navSaludVit" aria-controls="navSaludVit" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- ENLACES Y BOTONES -->
+        <div class="collapse navbar-collapse justify-content-end" id="navSaludVit">
+            <!-- ENLACES -->
+            <ul class="navbar-nav me-auto ms-5">
+                <li class="nav-item">
+                    <a class="nav-link nav-hover" href="/">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-hover" href="/sobreNosotros">Sobre Nosotros</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link nav-hover" href="/ayuda">Contáctanos</a>
+                </li>
+            </ul>
+
+            <!-- BOTONES -->
+            <div class="d-flex">
+                <a href="/login" class="btn btn-outline-info me-2 d-flex align-items-center">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+                </a>
+                <a href="/register" class="btn btn-info text-white d-flex align-items-center">
+                    <i class="bi bi-person-plus-fill me-1"></i> Registrarse
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- BANNER -->
+<section class="contact-banner text-center">
+    <h1>CONTÁCTANOS</h1>
+</section>
+
+<!-- CONTENIDO -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row">
+            <!-- IZQUIERDA -->
+            <div class="col-md-6 mb-4 mb-md-0">
+                <h4 class="fw-bold" style="color: #00bcd4;">| CONTÁCTANOS</h4>
+                <p class="text-muted">
+                    Estamos muy atentos a lo que puedas necesitar. Síguenos en nuestras redes sociales, 
+                    escríbenos o llámanos y con gusto nos pondremos en contacto contigo. ¡Estamos para ayudarte!
+                </p>
+
+                <div class="social-icons mt-4">
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <a href="#"><i class="bi bi-tiktok"></i></a>
+                </div>
+            </div>
+
+            <!-- DERECHA -->
+            <div class="col-md-6">
+                <div class="contact-box">
+                    <i class="bi bi-telephone-fill"></i>
+                    <div>
+                        <strong>Contacto</strong><br>
+                        <span class="text-muted small">(01) 3191414</span>
+                    </div>
+                </div>
+                <div class="contact-box">
+                    <i class="bi bi-whatsapp"></i>
+                    <div>
+                        <strong>WhatsApp</strong><br>
+                        <span class="text-muted small">+51 952 028 870</span>
+                    </div>
+                </div>
+                <div class="contact-box">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <div>
+                        <strong>Dirección</strong><br>
+                        <span class="text-muted small">Av. Brasil 702 - Lima</span>
+                    </div>
+                </div>
+                <div class="contact-box">
+                    <i class="bi bi-envelope-fill"></i>
+                    <div>
+                        <strong>Enviar un correo</strong><br>
+                        <span class="text-muted small">contacto@saludvit.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+
+<!-- SEDE SALUDVIT -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-start">
+            <!-- Información -->
+            <div class="col-md-6 mb-4 mb-md-0">
+                <h4 class="fw-bold" style="color: #00bcd4;">|Sede Av. Brasil</h4>
+                <hr style="width: 60px; border-top: 2px solid #00bcd4;">
+
+                <h6 class="fw-bold mt-4">Teléfonos</h6>
+                <p class="mb-1">Central citas: (01) 765-4321</p>
+                <p class="mb-1">Urgencias: (01) 765-9876</p>
+                <p class="mb-1">Farmacia: (01) 765-0001</p>
+                <p class="mb-4">Fax: (01) 765-1111</p>
+
+                <h6 class="fw-bold">Correos</h6>
+                <p class="mb-1">Central de citas: <a href="mailto:citas@saludvit.com">citas@saludvit.com</a></p>
+                <p class="mb-1">Admisión Ambulatoria: <a href="mailto:ambulatorio@saludvit.com">ambulatorio@saludvit.com</a></p>
+                <p class="mb-1">Admisión Hospitalaria: <a href="mailto:hospitalizacion@saludvit.com">hospitalizacion@saludvit.com</a></p>
+            </div>
+
+            <!-- Mapa -->
+            <div class="col-md-6">
+                <div class="ratio ratio-16x9 shadow-sm rounded">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3900.891027884548!2d-77.05147092400325!3d-12.075741942376774!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c888a9d75017%3A0xfef96f7a94f15095!2sAv.%20Brasil%20702%2C%20Jes%C3%BAs%20Mar%C3%ADa%2015046!5e0!3m2!1ses-419!2spe!4v1693000000000!5m2!1ses-419!2spe"
+                        width="600"
+                        height="450"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer style="background-color: #e0f7f9;" class="pt-5 pb-4 mt-5">
+    <div class="container text-center text-md-start">
+        <div class="row align-items-center">
+
+            <!-- Logo y descripción -->
+            <div class="col-md-4 mb-4 mb-md-0 text-center text-md-start">
+                <img src="/img/logo.png" alt="SaludVit" style="height: 50px;" class="mb-2">
+                <p class="text-muted small">
+                    SaludVit es una plataforma pensada para acercarte a una atención médica más humana, rápida y segura. Tu salud, nuestra prioridad.
+                </p>
+            </div>
+
+            <!-- Contacto -->
+            <div class="col-md-4 mb-4 mb-md-0 text-center">
+                <h6 class="fw-bold text-dark mb-3">Contáctanos</h6>
+                <p class="text-muted mb-1"><i class="bi bi-geo-alt-fill me-2"></i>Av. Salud 123 - Lima, Perú</p>
+                <p class="text-muted mb-1"><i class="bi bi-envelope-fill me-2"></i>contacto@saludvit.com</p>
+                <p class="text-muted"><i class="bi bi-telephone-fill me-2"></i>+51 952028870</p>
+            </div>
+
+            <!-- Redes sociales -->
+            <div class="col-md-4 text-center text-md-end">
+                <h6 class="fw-bold text-dark mb-3">Síguenos</h6>
+                <a href="#" class="btn btn-outline-info rounded-circle me-2" style="width: 40px; height: 40px;">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="#" class="btn btn-outline-info rounded-circle me-2" style="width: 40px; height: 40px;">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="#" class="btn btn-outline-info rounded-circle me-2" style="width: 40px; height: 40px;">
+                    <i class="bi bi-linkedin"></i>
+                </a>
+                <a href="#" class="btn btn-outline-info rounded-circle" style="width: 40px; height: 40px;">
+                    <i class="bi bi-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+
+        <hr class="mt-4" style="opacity: 0.15;">
+
+        <div class="text-center text-muted small">
+            &copy; 2025 SaludVit. Todos los derechos reservados.
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

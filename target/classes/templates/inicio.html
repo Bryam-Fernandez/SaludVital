@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salud Vital - Recetas Médicas</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0077cc;
+            --secondary-blue: #00bcd4;
+            --accent-blue: #0059ff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #2c3e50;
+            --success-green: #28a745;
+            --warning-yellow: #ffc107;
+            --danger-red: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f5f8fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Header Styles */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hospital-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .hospital-logo {
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hospital-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            letter-spacing: -0.5px;
+        }
+        
+        .hospital-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        /* Navigation */
+        .main-nav {
+            background-color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-link-custom {
+            color: var(--dark-gray) !important;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-link-custom:hover {
+            background-color: rgba(0, 119, 204, 0.1);
+            color: var(--primary-blue) !important;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link-custom.active {
+            background-color: var(--primary-blue);
+            color: white !important;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 1rem;
+            background-color: rgba(0, 119, 204, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+            min-height: 70vh;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .page-title {
+            color: var(--dark-gray);
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--secondary-blue);
+            border-radius: 2px;
+        }
+        
+        .page-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        /* Action Bar */
+        .action-bar {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 119, 204, 0.3);
+            color: white;
+        }
+        
+        .btn-secondary-custom {
+            background-color: white;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 0.8rem 1.8rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary-custom:hover {
+            background-color: rgba(0, 119, 204, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Table Styles */
+        .data-table-container {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .table-custom {
+            margin-bottom: 0;
+        }
+        
+        .table-custom thead {
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+        }
+        
+        .table-custom th {
+            border: none;
+            padding: 1.2rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .table-custom td {
+            padding: 1.2rem 1.5rem;
+            vertical-align: middle;
+            border-top: 1px solid #f1f3f4;
+        }
+        
+        .table-custom tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: rgba(0, 119, 204, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .status-active {
+            background-color: rgba(40, 167, 69, 0.15);
+            color: var(--success-green);
+        }
+        
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: var(--warning-yellow);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dee2e6;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-icon:hover {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        /* Footer */
+        .main-footer {
+            background-color: var(--dark-gray);
+            color: white;
+            padding: 2.5rem 0 1rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-logo-icon {
+            font-size: 1.8rem;
+            color: var(--secondary-blue);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .action-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+            
+            .table-custom th,
+            .table-custom td {
+                padding: 0.8rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links {
+                justify-content: center;
+            }
+            
+            .nav-link-custom span {
+                display: none;
+            }
+            
+            .nav-link-custom {
+                padding: 0.5rem !important;
+                justify-content: center;
+            }
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="hospital-brand">
+                <div class="hospital-logo">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="hospital-title">Salud Vital</h1>
+                    <div class="hospital-subtitle">Centro Médico Especializado</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-2">
+                    <a th:href="@{/}" class="nav-link-custom active">
+                        <i class="bi bi-house-door"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a th:href="@{/pacientes}" class="nav-link-custom">
+                        <i class="bi bi-people"></i>
+                        <span>Pacientes</span>
+                    </a>
+                    <a th:href="@{/citas}" class="nav-link-custom">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Citas</span>
+                    </a>
+                    <a th:href="@{/medicos}" class="nav-link-custom">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Médicos</span>
+                    </a>
+                    <a th:href="@{/recetas}" class="nav-link-custom">
+                        <i class="bi bi-prescription2"></i>
+                        <span>Recetas</span>
+                    </a>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">DR</div>
+                    <div class="d-none d-md-block">
+                        <div class="fw-bold">Dr. Alejandro Martínez</div>
+                        <div class="small text-muted">Administrador</div>
+                    </div>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2 class="page-title">Recetas Médicas</h2>
+                <p class="page-subtitle">Gestión y visualización de prescripciones médicas</p>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <div>
+                    <button class="btn btn-primary-custom">
+                        <i class="bi bi-plus-circle"></i>
+                        Nueva Receta
+                    </button>
+                    <button class="btn btn-secondary-custom ms-2">
+                        <i class="bi bi-download"></i>
+                        Exportar
+                    </button>
+                </div>
+                
+                <div class="d-flex align-items-center">
+                    <div class="input-group" style="max-width: 300px;">
+                        <span class="input-group-text bg-white">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Buscar recetas...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Paciente</th>
+                                <th>Medicamento</th>
+                                <th>Dosis</th>
+                                <th>Frecuencia</th>
+                                <th>Médico</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="receta : ${recetas}">
+                                <td th:text="${receta.id}" class="fw-bold"></td>
+                                <td>
+                                    <div class="fw-semibold" th:text="${receta.paciente.nombre}"></div>
+                                    <small class="text-muted" th:text="${receta.paciente.edad + ' años'}"></small>
+                                </td>
+                                <td th:text="${receta.medicamento}"></td>
+                                <td>
+                                    <span class="badge bg-info text-dark" th:text="${receta.dosis}"></span>
+                                </td>
+                                <td th:text="${receta.frecuencia}"></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar small" style="width: 30px; height: 30px; font-size: 0.9rem;">
+                                            <span th:text="${receta.medico.nombre.substring(0,2)}"></span>
+                                        </div>
+                                        <span th:text="${receta.medico.nombre}"></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold" th:text="${#dates.format(receta.fechaEmision, 'dd/MM/yyyy')}"></span>
+                                    <div class="text-muted small" th:text="${#dates.format(receta.fechaEmision, 'HH:mm')}"></div>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-active">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Activa
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Ver detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Imprimir">
+                                            <i class="bi bi-printer"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Ejemplo de fila adicional para demostración -->
+                            <tr>
+                                <td class="fw-bold">102</td>
+                                <td>
+                                    <div class="fw-semibold">María González</div>
+                                    <small class="text-muted">45 años</small>
+                                </td>
+                                <td>Amoxicilina</td>
+                                <td><span class="badge bg-info text-dark">500mg</span></td>
+                                <td>Cada 8 horas</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar small" style="width: 30px; height: 30px; font-size: 0.9rem;">
+                                            DR
+                                        </div>
+                                        <span>Dra. Ana López</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">15/03/2025</span>
+                                    <div class="text-muted small">10:30</div>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-pending">
+                                        <i class="bi bi-clock me-1"></i>
+                                        Pendiente
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Ver detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn-icon" title="Imprimir">
+                                            <i class="bi bi-printer"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Si no hay recetas -->
+                            <tr th:unless="${recetas and !recetas.isEmpty()}">
+                                <td colspan="9">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">
+                                            <i class="bi bi-prescription2"></i>
+                                        </div>
+                                        <h5>No hay recetas registradas</h5>
+                                        <p class="text-muted">Comienza creando una nueva receta médica.</p>
+                                        <button class="btn btn-primary-custom mt-2">
+                                            <i class="bi bi-plus-circle"></i>
+                                            Crear primera receta
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="text-muted">
+                    Mostrando <span class="fw-bold">10</span> de <span class="fw-bold">48</span> recetas
+                </div>
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="bi bi-heart-pulse footer-logo-icon"></i>
+                    <div>
+                        <h4 class="mb-0">Salud Vital</h4>
+                        <small>Salud y bienestar para todos</small>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#">Términos</a>
+                    <a href="#">Privacidad</a>
+                    <a href="#">Contacto</a>
+                    <a href="#">Ayuda</a>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 Centro de Salud Vital. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Activar navegación activa
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link-custom');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPath || 
+                    (currentPath === '/' && link.getAttribute('href') === '/')) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Efecto hover en filas de tabla
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

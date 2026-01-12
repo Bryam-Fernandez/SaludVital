@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Tratamiento</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .header-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .tratamiento-card {
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .badge-estado {
+            font-size: 0.9rem;
+            padding: 0.4em 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark header-bg">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/medico/panel}">
+                <i class="bi bi-arrow-left me-2"></i>
+                Volver al Panel
+            </a>
+            <span class="navbar-text">
+                <i class="bi bi-prescription me-2"></i>
+                Detalle del Tratamiento
+            </span>
+        </div>
+    </nav>
+    
+    <div class="container py-4">
+        <!-- Mensajes -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- Información del Tratamiento -->
+        <div class="card tratamiento-card mb-4">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="bi bi-prescription me-2"></i>
+                    Tratamiento #<span th:text="${tratamiento.id}"></span>
+                </h4>
+                <span th:class="'badge ' + 
+                    ${tratamiento.estado.toString() == 'ACTIVO'} ? 'bg-success' : 
+                    (${tratamiento.estado.toString() == 'COMPLETADO'} ? 'bg-info' : 
+                    (${tratamiento.estado.toString() == 'CANCELADO'} ? 'bg-danger' : 'bg-secondary'))"
+                      th:text="${tratamiento.estado}"></span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-person me-2"></i> Paciente</h5>
+                        <div class="ps-4">
+                            <p class="mb-1">
+                                <strong>Nombre:</strong> 
+                                <span th:text="${tratamiento.paciente.nombre + ' ' + tratamiento.paciente.apellido}"></span>
+                            </p>
+                            <p class="mb-1">
+                                <strong>DNI:</strong> 
+                                <span th:text="${tratamiento.paciente.numeroIdentificacion}"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-person-badge me-2"></i> Médico</h5>
+                        <div class="ps-4">
+                            <p class="mb-1">
+                                <strong>Responsable:</strong> 
+                                <span th:text="${tratamiento.medico.nombre + ' ' + tratamiento.medico.apellido}"></span>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Especialidad:</strong> 
+                                <span th:text="${tratamiento.medico.especialidad}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Diagnóstico -->
+                <div class="mb-4">
+                    <h5><i class="bi bi-clipboard2-pulse me-2"></i> Diagnóstico</h5>
+                    <div class="ps-4">
+                        <p class="card-text" th:text="${tratamiento.diagnostico}"></p>
+                    </div>
+                </div>
+                
+                <!-- Plan de Tratamiento -->
+                <div class="mb-4">
+                    <h5><i class="bi bi-clipboard2-check me-2"></i> Plan de Tratamiento</h5>
+                    <div class="ps-4">
+                        <p class="card-text" th:text="${tratamiento.planTratamiento}"></p>
+                    </div>
+                </div>
+                
+                <!-- Fechas -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <h6><i class="bi bi-calendar-event me-2"></i> Fecha de Inicio</h6>
+                        <div class="ps-4">
+                            <span th:text="${#temporals.format(tratamiento.fechaInicio, 'dd/MM/yyyy')}"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="bi bi-calendar-check me-2"></i> Fecha de Fin</h6>
+                        <div class="ps-4">
+                            <span th:if="${tratamiento.fechaFin != null}" 
+                                  th:text="${#temporals.format(tratamiento.fechaFin, 'dd/MM/yyyy')}"></span>
+                            <span th:unless="${tratamiento.fechaFin != null}">No especificada</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="bi bi-clock-history me-2"></i> Duración</h6>
+                        <div class="ps-4">
+                            <span th:text="${tratamiento.duracion != null} ? ${tratamiento.duracion} : 'No especificada'"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Observaciones -->
+                <div th:if="${tratamiento.observaciones != null and tratamiento.observaciones != ''}" class="mb-4">
+                    <h5><i class="bi bi-chat-text me-2"></i> Observaciones</h5>
+                    <div class="ps-4">
+                        <p class="card-text" th:text="${tratamiento.observaciones}"></p>
+                    </div>
+                </div>
+                
+                <!-- Instrucciones -->
+                <div th:if="${tratamiento.instrucciones != null and tratamiento.instrucciones != ''}" class="mb-4">
+                    <h5><i class="bi bi-list-check me-2"></i> Instrucciones</h5>
+                    <div class="ps-4">
+                        <p class="card-text" th:text="${tratamiento.instrucciones}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Medicamentos Recetados -->
+        <div th:if="${tratamiento.recetas != null and !tratamiento.recetas.isEmpty()}" class="card tratamiento-card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="bi bi-capsule me-2"></i> Medicamentos Recetados
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Medicamento</th>
+                                <th>Dosis</th>
+                                <th>Frecuencia</th>
+                                <th>Duración</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="receta : ${tratamiento.recetas}">
+                                <td th:text="${receta.nombre}"></td>
+                                <td th:text="${receta.dosis}"></td>
+                                <td th:text="${receta.frecuencia}"></td>
+                                <td th:text="${receta.duracion}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div th:unless="${tratamiento.recetas != null and !tratamiento.recetas.isEmpty()}" class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i> No hay medicamentos recetados en este tratamiento.
+        </div>
+        
+        <!-- Botones de Acción -->
+        <div class="d-flex justify-content-between">
+            <a th:href="@{/tratamientos/medico}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Volver a la Lista
+            </a>
+            <a th:href="@{/medico/panel}" class="btn btn-primary">
+                <i class="bi bi-house me-1"></i> Ir al Panel
+            </a>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Citas - Panel Médico</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0077cc;
+            --secondary-blue: #00bcd4;
+            --light-blue: #e3f2fd;
+        }
+        
+        .doctor-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+        
+        .cita-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cita-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .badge-programada { background-color: #fff3cd; color: #856404; }
+        .badge-confirmada { background-color: #d4edda; color: #155724; }
+        .badge-cancelada { background-color: #f8d7da; color: #721c24; }
+        .badge-completada { background-color: #d1ecf1; color: #0c5460; }
+        .badge-pendiente { background-color: #e2e3e5; color: #383d41; }
+        
+        .action-buttons .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- Back to Dashboard -->
+        <div class="mb-3">
+            <a th:href="@{/medico/panel}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Volver al Panel
+            </a>
+        </div>
+        
+        <!-- Header -->
+        <div class="doctor-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="bi bi-calendar-heart"></i> Mis Citas Médicas</h1>
+                    <p class="lead mb-0">Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Nombre</span> - 
+                    <span th:text="${medico.especialidad}">Especialidad</span></p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="d-flex justify-content-end align-items-center gap-3">
+                        <div class="text-start">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-calendar-check fs-4"></i>
+                                <div>
+                                    <h5 class="mb-0" th:text="${citas.size()}">0</h5>
+                                    <small>Total de Citas</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-funnel"></i> Filtros</h5>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <form th:action="@{/citas/medico}" method="get" class="d-flex flex-wrap gap-2">
+                                <input type="date" name="fecha" th:value="${fecha}" class="form-control" style="width: auto;">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i> Filtrar
+                                </button>
+                                <a th:href="@{/citas/medico}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Limpiar
+                                </a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Appointments List -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-calendar-week"></i> Mis Citas</h5>
+                        <span class="badge bg-primary" th:text="${citas.size()}">0 citas</span>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(citas)}" class="text-center py-5">
+                            <i class="bi bi-calendar-x display-1 text-muted"></i>
+                            <h4 class="text-muted mt-3">No hay citas programadas</h4>
+                            <p class="text-muted" th:if="${fecha != null}">No tienes citas agendadas para el <span th:text="${fecha}"></span></p>
+                            <p class="text-muted" th:unless="${fecha != null}">No tienes citas agendadas</p>
+                        </div>
+                        
+                        <div th:if="${not #lists.isEmpty(citas)}">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha y Hora</th>
+                                            <th>Paciente</th>
+                                            <th>Motivo</th>
+                                            <th>Estado</th>
+                                            <th>Tarifa</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="cita : ${citas}" class="align-middle">
+                                            <td>
+                                                <small class="text-muted" th:text="${#temporals.format(cita.fechaHora, 'HH:mm')} + ' hrs'"></small>
+                                                <br>
+                                                <small class="text-muted" th:text="${#temporals.format(cita.fechaHora, 'dd/MM/yyyy')}"></small>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-circle me-3" 
+                                                         style="width: 40px; height: 40px; background-color: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-blue); font-weight: bold;">
+                                                        <span th:text="${#strings.substring(cita.paciente.nombre, 0, 1) + #strings.substring(cita.paciente.apellido, 0, 1)}">PP</span>
+                                                    </div>
+                                                    <div>
+                                                        <div th:text="${cita.paciente.nombre + ' ' + cita.paciente.apellido}">Paciente</div>
+                                                        <small class="text-muted" th:text="${cita.paciente.telefono}">Teléfono</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 200px;" 
+                                                     th:text="${cita.motivo}" title="${cita.motivo}"></div>
+                                            </td>
+                                            <td>
+                                                <span class="status-badge" 
+                                                      th:classappend="'badge-' + ${cita.estado.toString().toLowerCase()}" 
+                                                      th:text="${cita.estado}">
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold" th:text="'S/ ' + ${#numbers.formatDecimal(cita.tarifaAplicada, 1, 2)}">S/ 0.00</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <!-- Botón Ver Detalles -->
+                                                    <a th:href="@{/citas/{id}(id=${cita.id})}" 
+                                                       class="btn btn-outline-primary" title="Ver detalles de la cita">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Botón Tratamiento -->
+                                                    <a th:href="@{'/citas/' + ${cita.id} + '/detalle'}" 
+                                                       class="btn btn-info" title="Crear tratamiento">
+                                                        <i class="bi bi-file-medical"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Botón Receta -->
+                                                    <a th:href="@{'/citas/' + ${cita.id} + '/receta-rapida'}" 
+                                                       class="btn btn-success" title="Emitir receta">
+                                                        <i class="bi bi-prescription"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Botón Confirmar -->
+                                                    <a th:href="@{/citas/confirmar/{id}(id=${cita.id})}" 
+                                                       th:if="${cita.estado.toString() == 'PROGRAMADA' or cita.estado.toString() == 'PENDIENTE'}"
+                                                       class="btn btn-outline-success" title="Confirmar cita">
+                                                        <i class="bi bi-check-circle"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Botón Cancelar -->
+                                                    <a th:href="@{/citas/cancelar/{id}(id=${cita.id})}" 
+                                                       th:if="${cita.estado.toString() != 'CANCELADA' and cita.estado.toString() != 'COMPLETADA'}"
+                                                       class="btn btn-outline-danger" title="Cancelar cita">
+                                                        <i class="bi bi-x-circle"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

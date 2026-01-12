@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Tratamiento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .tratamiento-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .badge-estado {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        .badge-activo { background-color: #28a745; }
+        .badge-completado { background-color: #6c757d; }
+        .badge-suspendido { background-color: #ffc107; }
+        .badge-cancelado { background-color: #dc3545; }
+        .receta-card {
+            border-left: 4px solid #17a2b8;
+            margin-bottom: 1rem;
+        }
+        .medicamento-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- Header del tratamiento -->
+        <div class="tratamiento-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-2">Tratamiento Médico</h1>
+                    <p class="mb-0">
+                        <i class="fas fa-user-md"></i> 
+                        Médico: <span th:text="${tratamiento.medico.nombre + ' ' + tratamiento.medico.apellido}"></span>
+                    </p>
+                </div>
+                <div>
+                    <span th:switch="${tratamiento.estado}" class="badge-estado">
+                        <span th:case="ACTIVO" class="badge-activo">Activo</span>
+                        <span th:case="COMPLETADO" class="badge-completado">Completado</span>
+                        <span th:case="SUSPENDIDO" class="badge-suspendido">Suspendido</span>
+                        <span th:case="CANCELADO" class="badge-cancelado">Cancelado</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información del tratamiento -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-stethoscope"></i> Diagnóstico</h5>
+                    </div>
+                    <div class="card-body">
+                        <p th:text="${tratamiento.diagnostico}"></p>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-clipboard-list"></i> Plan de Tratamiento</h5>
+                    </div>
+                    <div class="card-body">
+                        <p th:text="${tratamiento.planTratamiento}"></p>
+                    </div>
+                </div>
+                
+                <!-- Recetas -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-prescription"></i> Recetas Médicas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${recetas == null or recetas.isEmpty()}">
+                            <div class="alert alert-info">
+                                No hay recetas asociadas a este tratamiento.
+                            </div>
+                        </div>
+                        
+                        <div th:each="receta : ${recetas}">
+                            <div class="receta-card card mb-3">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Receta #<span th:text="${receta.numeroReceta}"></span></strong>
+                                        <br>
+                                        <small class="text-muted">
+                                            Emitida: <span th:text="${#temporals.format(receta.fechaEmision, 'dd/MM/yyyy')}"></span>
+                                            | Vence: <span th:text="${#temporals.format(receta.fechaCaducidad, 'dd/MM/yyyy')}"></span>
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <span th:switch="${receta.estado}" class="badge">
+                                            <span th:case="ACTIVA" class="bg-success">Activa</span>
+                                            <span th:case="DISPENSADA" class="bg-info">Dispensada</span>
+                                            <span th:case="COMPLETADA" class="bg-secondary">Completada</span>
+                                            <span th:case="VENCIDA" class="bg-warning">Vencida</span>
+                                            <span th:case="CANCELADA" class="bg-danger">Cancelada</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Medicamentos:</h6>
+                                    <div th:each="item : ${receta.items}">
+                                        <div class="medicamento-item">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <strong th:text="${item.medicamento}"></strong>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <small>Dosis: <span th:text="${item.dosis}"></span></small>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <small>Frecuencia: <span th:text="${item.frecuencia}"></span></small>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <small th:if="${item.duracionDias != null}">
+                                                        Duración: <span th:text="${item.duracionDias}"></span> días
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div th:if="${item.indicaciones != null and !item.indicaciones.isEmpty()}">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    Indicaciones: <span th:text="${item.indicaciones}"></span>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div th:if="${receta.instruccionesGenerales != null}">
+                                        <hr>
+                                        <h6>Instrucciones generales:</h6>
+                                        <p th:text="${receta.instruccionesGenerales}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar con información -->
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Fechas</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Inicio:</strong> 
+                            <span th:text="${#temporals.format(tratamiento.fechaInicio, 'dd/MM/yyyy')}"></span>
+                        </p>
+                        <p th:if="${tratamiento.fechaFin != null}">
+                            <strong>Fin estimado:</strong> 
+                            <span th:text="${#temporals.format(tratamiento.fechaFin, 'dd/MM/yyyy')}"></span>
+                        </p>
+                        <p><strong>Duración:</strong> 
+                            <span th:if="${tratamiento.fechaFin != null}">
+                                <span th:text="${#temporals.between(tratamiento.fechaInicio, tratamiento.fechaFin).days}"></span> días
+                            </span>
+                            <span th:if="${tratamiento.fechaFin == null}">
+                                Indefinida
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-white">
+                        <h5 class="mb-0"><i class="fas fa-clipboard-check"></i> Estadísticas</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Recetas totales:</strong> 
+                            <span th:text="${recetas != null ? recetas.size() : 0}"></span>
+                        </p>
+                        <p><strong>Recetas activas:</strong> 
+                            <span th:text="${recetas != null ? recetas.?[estado.name() == 'ACTIVA' or estado.name() == 'DISPENSADA'].size() : 0}"></span>
+                        </p>
+                       <p><strong>Medicamentos:</strong> 
+    <span th:text="${recetas != null ? #aggregates.sum(recetas.![items.size()]) : 0}"></span>
+</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-notes-medical"></i> Acciones</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/tratamientos/paciente/mis-tratamientos}" class="btn btn-outline-primary">
+                                <i class="fas fa-list"></i> Ver todos mis tratamientos
+                            </a>
+                            <a th:href="@{'/citas/' + ${tratamiento.cita.id}}" class="btn btn-outline-secondary">
+                                <i class="fas fa-calendar"></i> Ver cita asociada
+                            </a>
+                            <button class="btn btn-outline-success" onclick="window.print()">
+                                <i class="fas fa-print"></i> Imprimir tratamiento
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Volver -->
+        <div class="mt-4">
+            <a th:href="@{/tratamientos/paciente/mis-tratamientos}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a mis tratamientos
+            </a>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
