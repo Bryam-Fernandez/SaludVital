@@ -12,8 +12,8 @@ COPY src ./src
 # Construir la aplicación
 RUN mvn clean package -DskipTests
 
-# Etapa de ejecución - CORREGIDO
-FROM openjdk:17-jdk-slim
+# Etapa de ejecución - CORREGIDO usando eclipse-temurin
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # Crear usuario no root para seguridad
@@ -29,7 +29,11 @@ USER spring:spring
 # Exponer puerto
 EXPOSE 8080
 
-# Health check
+# Health check (requiere instalar curl)
+RUN apt-get update && apt-get install -y curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
