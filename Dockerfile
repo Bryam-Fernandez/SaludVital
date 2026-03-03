@@ -12,8 +12,8 @@ COPY src ./src
 # Construir la aplicación
 RUN mvn clean package -DskipTests
 
-# Etapa de ejecución
-FROM openjdk:17-slim
+# Etapa de ejecución - CORREGIDO
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Crear usuario no root para seguridad
