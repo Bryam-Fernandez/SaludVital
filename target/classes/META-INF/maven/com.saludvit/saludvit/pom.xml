@@ -49,13 +49,6 @@
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
 
-    <!-- MySQL Driver -->
-    <dependency>
-      <groupId>com.mysql</groupId>
-      <artifactId>mysql-connector-j</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
     <!-- Spring Boot DevTools (opcional) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

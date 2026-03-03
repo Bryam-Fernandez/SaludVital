@@ -1,5 +1,5 @@
-# Etapa de construcción
-FROM maven:3.8.4-openjdk-17-slim AS build
+# Etapa de construcción - CON JAVA 21
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Copiar solo el pom.xml primero (para aprovechar caché de Docker)
@@ -12,8 +12,8 @@ COPY src ./src
 # Construir la aplicación
 RUN mvn clean package -DskipTests
 
-# Etapa de ejecución - USANDO ECLIPSE-TEMURIN (CORREGIDO)
-FROM eclipse-temurin:17-jre-jammy
+# Etapa de ejecución - CON JAVA 21
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
 # Copiar el JAR
