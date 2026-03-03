@@ -51,28 +51,32 @@ public class ExpedienteMedicoController {
         return expedienteService.existeExpedienteParaPaciente(pacienteId);
     }
 
-    // Ver expediente de paciente (para pacientes)
     @GetMapping("/mi-expediente")
     @PreAuthorize("hasRole('PACIENTE')")
     public String miExpediente(Model model, Principal principal) {
+
         String email = principal.getName();
         Optional<Paciente> pacienteOpt = pacienteService.buscarPorUsuarioEmail(email);
-        
+
         if (pacienteOpt.isEmpty()) {
             return "redirect:/login?error=Paciente no encontrado";
         }
-        
+
         Paciente paciente = pacienteOpt.get();
-        Optional<ExpedienteMedico> expedienteOpt = expedienteService.buscarPorPacienteId(paciente.getId());
-        
+        Optional<ExpedienteMedico> expedienteOpt =
+                expedienteService.buscarPorPacienteId(paciente.getId());
+
+        // 🔥 AQUÍ ESTÁ EL CAMBIO IMPORTANTE
         if (expedienteOpt.isEmpty()) {
-            return "redirect:/expedientes/solicitar";
+            model.addAttribute("mensaje",
+                    "No hay expedientes registrados por un médico.");
+        } else {
+            model.addAttribute("expediente", expedienteOpt.get());
         }
-        
-        model.addAttribute("expediente", expedienteOpt.get());
+
         model.addAttribute("paciente", paciente);
-        
-        return "expedientes/mi-expediente";
+
+        return "expedientes/mi-expediente"; // SIEMPRE retorna la misma vista
     }
 
     // Ver detalle de expediente específico

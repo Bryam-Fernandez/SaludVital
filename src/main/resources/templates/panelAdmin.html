@@ -699,10 +699,6 @@
                             <i class="bi bi-eye"></i>
                             Ver Usuarios
                         </a>
-                        <a th:href="@{/nuevo-usuario}" class="feature-btn secondary">
-                            <i class="bi bi-plus-circle"></i>
-                            Registrar Usuario
-                        </a>
                     </div>
                 </div>
                 
@@ -719,10 +715,6 @@
                         <a th:href="@{/pacientes}" class="feature-btn primary">
                             <i class="bi bi-eye"></i>
                             Ver Pacientes
-                        </a>
-                        <a th:href="@{/pacientes/nuevo}" class="feature-btn secondary">
-                            <i class="bi bi-plus-circle"></i>
-                            Registrar Paciente
                         </a>
                     </div>
                 </div>
@@ -762,10 +754,6 @@
                             <i class="bi bi-eye"></i>
                             Ver Citas
                         </a>
-                        <a th:href="@{/citas/nueva}" class="feature-btn secondary">
-                            <i class="bi bi-plus-circle"></i>
-                            Nueva Cita
-                        </a>
                     </div>
                 </div>
                 
@@ -782,10 +770,6 @@
                         <a th:href="@{/expedientes}" class="feature-btn primary">
                             <i class="bi bi-eye"></i>
                             Ver Expedientes
-                        </a>
-                        <a th:href="@{/expedientes/buscar}" class="feature-btn secondary">
-                            <i class="bi bi-search"></i>
-                            Buscar Expediente
                         </a>
                     </div>
                 </div>
@@ -804,76 +788,11 @@
                             <i class="bi bi-eye"></i>
                             Ver Recetas
                         </a>
-                        <a th:href="@{/recetas/nueva}" class="feature-btn secondary">
-                            <i class="bi bi-plus-circle"></i>
-                            Nueva Receta
-                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Activity -->
-            <div class="dashboard-card mt-5">
-                <div class="card-header">
-                    <h3 class="card-title">Actividad Reciente</h3>
-                    <div class="card-actions">
-                        <button class="action-btn">
-                            <i class="bi bi-arrow-clockwise"></i>
-                        </button>
-                        <button class="action-btn">
-                            <i class="bi bi-filter"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <ul class="activity-list">
-                        <li class="activity-item">
-                            <div class="activity-icon user">
-                                <i class="bi bi-person-plus"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-text">
-                                    <strong>Nuevo usuario registrado:</strong> Dr. Carlos Rodríguez
-                                </div>
-                                <div class="activity-time">Hace 5 minutos</div>
-                            </div>
-                        </li>
-                        <li class="activity-item">
-                            <div class="activity-icon appointment">
-                                <i class="bi bi-calendar-plus"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-text">
-                                    <strong>Cita creada:</strong> María González con Dra. Ana López
-                                </div>
-                                <div class="activity-time">Hace 15 minutos</div>
-                            </div>
-                        </li>
-                        <li class="activity-item">
-                            <div class="activity-icon prescription">
-                                <i class="bi bi-prescription"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-text">
-                                    <strong>Receta emitida:</strong> Amoxicilina 500mg para Juan Pérez
-                                </div>
-                                <div class="activity-time">Hace 30 minutos</div>
-                            </div>
-                        </li>
-                        <li class="activity-item">
-                            <div class="activity-icon patient">
-                                <i class="bi bi-person-plus"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-text">
-                                    <strong>Paciente registrado:</strong> Laura Mendoza, 28 años
-                                </div>
-                                <div class="activity-time">Hace 1 hora</div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+           
 
             <!-- Logout Button -->
             <div class="logout-section">

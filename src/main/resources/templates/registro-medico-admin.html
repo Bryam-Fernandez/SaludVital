@@ -72,69 +72,40 @@
 <body>
     <div class="form-container">
         <h2>Registrar Usuario (Admin o Médico)</h2>
-        <form th:action="@{/registro/medico-admin}" method="post" th:object="${usuario}">
-            <div class="mb-3">
-                <label for="firstName" class="form-label">Nombre:</label>
-                <input
-                  type="text"
-                  id="firstName"
-                  th:field="*{firstName}"
-                  class="form-control"
-                  required
-                />
-            </div>
+       <form th:action="@{/medicos/guardar-desde-registro}" method="post" th:object="${usuario}">
+    <div class="mb-3">
+        <label for="firstName" class="form-label">Nombre:</label>
+        <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required />
+    </div>
 
-            <div class="mb-3">
-                <label for="lastName" class="form-label">Apellido:</label>
-                <input
-                  type="text"
-                  id="lastName"
-                  th:field="*{lastName}"
-                  class="form-control"
-                  required
-                />
-            </div>
+    <div class="mb-3">
+        <label for="lastName" class="form-label">Apellido:</label>
+        <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required />
+    </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Correo Electrónico:</label>
-                <input
-                  type="email"
-                  id="email"
-                  th:field="*{email}"
-                  class="form-control"
-                  required
-                />
-            </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Correo Electrónico:</label>
+        <input type="email" id="email" th:field="*{email}" class="form-control" required />
+    </div>
 
-            <div class="mb-3">
-                <label for="password" class="form-label">Contraseña:</label>
-                <input
-                  type="password"
-                  id="password"
-                  th:field="*{password}"
-                  class="form-control"
-                  required
-                />
-            </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Contraseña:</label>
+        <input type="password" id="password" th:field="*{password}" class="form-control" required />
+    </div>
 
-            <div class="mb-4">
-                <label for="selectedRole" class="form-label">Rol:</label>
-                <select
-                  id="selectedRole"
-                  th:field="*{selectedRole}"
-                  class="form-select"
-                  required
-                >
-                    <option value="" disabled selected>Seleccione un rol</option>
-                    <option th:value="ROLE_ADMIN">ADMIN</option>
-                    <option th:value="ROLE_MEDICO">MÉDICO</option>
-                </select>
-            </div>
+    <div class="mb-4">
+        <label for="selectedRole" class="form-label">Rol:</label>
+        <select id="selectedRole" th:field="*{selectedRole}" class="form-select" required>
+            <option value="" disabled selected>Seleccione un rol</option>
+            <option th:value="ROLE_MEDICO">MÉDICO</option>
+        </select>
+    </div>
 
-            <button type="submit" class="btn btn-submit">
-                Registrar	
-            </button>
-        </form>
+    <button type="submit" class="btn btn-primary-custom">
+        <i class="bi bi-save"></i>
+        Registrar Médico
+    </button>
+</form>
 
         <a th:href="@{/login}" class="back-link">← Volver al Login</a>
     </div>

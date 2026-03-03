@@ -681,10 +681,10 @@
                     </div>
                     
                     <div class="action-buttons">
-                        <a th:href="@{/medicos/nuevo}" class="btn btn-primary-custom">
-                            <i class="bi bi-person-plus"></i>
-                            Nuevo Médico
-                        </a>
+                        <a th:href="@{/medicos/registrar}" class="btn btn-primary-custom">
+    <i class="bi bi-person-plus"></i>
+    Nuevo Médico
+</a>
                         <button class="btn btn-secondary-custom" onclick="exportDoctors()">
                             <i class="bi bi-download"></i>
                             Exportar
@@ -792,20 +792,16 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span th:classappend="${m.estado == 'ACTIVO'} ? 'status-badge status-active' : 
-                                                          ${m.estado == 'INACTIVO'} ? 'status-badge status-inactive' : 
-                                                          'status-badge status-pending'">
-                                        <i th:classappend="${m.estado == 'ACTIVO'} ? 'bi bi-check-circle' : 
-                                                          ${m.estado == 'INACTIVO'} ? 'bi bi-x-circle' : 
-                                                          'bi bi-clock'"></i>
-                                        <span th:text="${m.estado}">ACTIVO</span>
-                                    </span>
+                                   <span th:class="'status-badge ' + (${m.estado == 'ACTIVO'} ? 'status-active' : (${m.estado == 'INACTIVO'} ? 'status-inactive' : 'status-pending'))">
+    <i th:class="'bi ' + (${m.estado == 'ACTIVO'} ? 'bi-check-circle' : (${m.estado == 'INACTIVO'} ? 'bi-x-circle' : 'bi-clock'))"></i>
+    <span th:text="${m.estado}">ACTIVO</span>
+</span>
                                 </td>
                                 <td>
-                                    <span th:classappend="${m.disponible} ? 'availability-badge available' : 'availability-badge unavailable'">
-                                        <i th:classappend="${m.disponible} ? 'bi bi-check-circle' : 'bi bi-x-circle'"></i>
-                                        <span th:text="${m.disponible} ? 'Disponible' : 'No disponible'">Disponible</span>
-                                    </span>
+                                   <span th:class="'availability-badge ' + (${m.disponible} ? 'available' : 'unavailable')">
+    <i th:class="'bi ' + (${m.disponible} ? 'bi-check-circle' : 'bi-x-circle')"></i>
+    <span th:text="${m.disponible} ? 'Disponible' : 'No disponible'">Disponible</span>
+</span>
                                 </td>
                                 <td>
                                     <div class="action-buttons-small">
@@ -823,21 +819,23 @@
                             </tr>
                             
                             <!-- No Results -->
-                            <tr th:if="${#lists.isEmpty(medicos)}" id="noResultsRow">
-                                <td colspan="6">
-                                    <div class="no-results">
-                                        <div class="no-results-icon">
-                                            <i class="bi bi-person-x"></i>
-                                        </div>
-                                        <h4>No hay médicos registrados</h4>
-                                        <p>Comienza agregando un nuevo médico al sistema.</p>
-                                        <a th:href="@{/medicos/nuevo}" class="btn btn-primary-custom">
-                                            <i class="bi bi-person-plus"></i>
-                                            Registrar Primer Médico
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                           <!-- No Results -->
+<tr th:if="${#lists.isEmpty(medicos)}" id="noResultsRow">
+    <td colspan="6">
+        <div class="no-results">
+            <div class="no-results-icon">
+                <i class="bi bi-person-x"></i>
+            </div>
+            <h4>No hay médicos registrados</h4>
+            <p>Comienza agregando un nuevo médico al sistema.</p>
+            <!-- CAMBIA ESTA LÍNEA: -->
+            <a th:href="@{/medicos/registrar}" class="btn btn-primary-custom">
+                <i class="bi bi-person-plus"></i>
+                Registrar Primer Médico
+            </a>
+        </div>
+    </td>
+</tr>
                         </tbody>
                     </table>
                 </div>
