@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Médicos - Salud Vital</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0077cc;
+            --secondary-blue: #00bcd4;
+            --accent-blue: #0059ff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #2c3e50;
+            --success-green: #28a745;
+            --warning-yellow: #ffc107;
+            --danger-red: #dc3545;
+            --purple: #6f42c1;
+            --teal: #20c997;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f5f8fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navbar-brand i {
+            font-size: 1.8rem;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Main Container */
+        .main-container {
+            padding: 3rem 0;
+            min-height: calc(100vh - 100px);
+        }
+        
+        /* Header Card */
+        .header-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--primary-blue);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .header-title {
+            color: var(--dark-gray);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 119, 204, 0.2);
+            color: white;
+        }
+        
+        .btn-secondary-custom {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary-custom:hover {
+            background: rgba(0, 119, 204, 0.1);
+            color: var(--primary-blue);
+        }
+        
+        /* Doctors Table Container */
+        .doctors-table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .table-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            position: relative;
+            min-width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.1);
+            outline: none;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        /* Doctors Table */
+        .doctors-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .doctors-table thead {
+            background: linear-gradient(135deg, rgba(0, 119, 204, 0.1) 0%, rgba(0, 89, 255, 0.1) 100%);
+        }
+        
+        .doctors-table th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-gray);
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+        
+        .doctors-table td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+        
+        .doctors-table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .doctors-table tbody tr:hover {
+            background-color: rgba(0, 119, 204, 0.05);
+            transform: translateX(5px);
+        }
+        
+        /* Doctor Avatar */
+        .doctor-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        /* Badges */
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-active {
+            background-color: rgba(40, 167, 69, 0.15);
+            color: var(--success-green);
+        }
+        
+        .status-inactive {
+            background-color: rgba(108, 117, 125, 0.15);
+            color: #6c757d;
+        }
+        
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: var(--warning-yellow);
+        }
+        
+        .availability-badge {
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .available {
+            background-color: rgba(40, 167, 69, 0.15);
+            color: var(--success-green);
+        }
+        
+        .unavailable {
+            background-color: rgba(220, 53, 69, 0.15);
+            color: var(--danger-red);
+        }
+        
+        .specialty-badge {
+            padding: 0.3rem 0.7rem;
+            background-color: rgba(111, 66, 193, 0.1);
+            color: var(--purple);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        /* Actions */
+        .action-buttons-small {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dee2e6;
+            background-color: white;
+            color: var(--primary-blue);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-icon:hover {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+        
+        .btn-icon.edit:hover {
+            background-color: var(--warning-yellow);
+            border-color: var(--warning-yellow);
+            color: #212529;
+        }
+        
+        .btn-icon.delete:hover {
+            background-color: var(--danger-red);
+            border-color: var(--danger-red);
+            color: white;
+        }
+        
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .page-item .page-link {
+            padding: 0.5rem 1rem;
+            border: 1px solid #dee2e6;
+            color: var(--primary-blue);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-item.active .page-link {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .page-item .page-link:hover {
+            background-color: rgba(0, 119, 204, 0.1);
+            border-color: var(--primary-blue);
+        }
+        
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+        }
+        
+        .no-results-icon {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Footer */
+        .page-footer {
+            background-color: var(--dark-gray);
+            color: white;
+            padding: 2rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-logo-icon {
+            font-size: 1.8rem;
+            color: var(--secondary-blue);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .doctors-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .table-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1.5rem 0;
+            }
+            
+            .header-card {
+                padding: 1.5rem;
+            }
+            
+            .doctors-table-container {
+                padding: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-primary-custom, .btn-secondary-custom {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links {
+                justify-content: center;
+            }
+            
+            .doctors-table th,
+            .doctors-table td {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .action-buttons-small {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0059b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-heart-pulse"></i>
+                Salud Vital
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/users}">
+                            <i class="bi bi-people"></i>
+                            Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/medicos}">
+                            <i class="bi bi-person-badge"></i>
+                            Médicos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="bi bi-person-heart"></i>
+                            Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" th:href="@{/logout}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Salir
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="container">
+            <!-- Header -->
+            <div class="header-card fade-in-up">
+                <div class="header-content">
+                    <div>
+                        <h1 class="header-title">
+                            <i class="bi bi-person-badge" style="color: var(--primary-blue);"></i>
+                            Gestión de Médicos
+                        </h1>
+                        <p class="header-subtitle">
+                            Administra el personal médico de la institución de forma eficiente
+                        </p>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a th:href="@{/medicos/registrar}" class="btn btn-primary-custom">
+    <i class="bi bi-person-plus"></i>
+    Nuevo Médico
+</a>
+                        <button class="btn btn-secondary-custom" onclick="exportDoctors()">
+                            <i class="bi bi-download"></i>
+                            Exportar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="stats-cards fade-in-up">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalDoctors" th:text="${#lists.size(medicos)}">0</div>
+                    <div class="stat-label">
+                        <i class="bi bi-people-fill"></i>
+                        Médicos Totales
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeDoctors">0</div>
+                    <div class="stat-label">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Médicos Activos
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="availableDoctors">0</div>
+                    <div class="stat-label">
+                        <i class="bi bi-calendar-check"></i>
+                        Disponibles
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="specialtiesCount">0</div>
+                    <div class="stat-label">
+                        <i class="bi bi-clipboard-check"></i>
+                        Especialidades
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Doctors Table -->
+            <div class="doctors-table-container fade-in-up">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="bi bi-list-ul"></i>
+                        Listado de Médicos
+                    </h3>
+                    
+                    <div class="table-controls">
+                        <div class="search-box">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" class="search-input" placeholder="Buscar médico..." id="searchInput">
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary-custom" onclick="showFilters()">
+                                <i class="bi bi-funnel"></i>
+                                Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="doctors-table">
+                        <thead>
+                            <tr>
+                                <th>Médico</th>
+                                <th>Información</th>
+                                <th>Especialidad</th>
+                                <th>Estado</th>
+                                <th>Disponibilidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctorsTableBody">
+                            <tr th:each="m, i : ${medicos}" class="fade-in-up doctor-row">
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="doctor-avatar">
+                                            <span th:text="${#strings.substring(m.nombre, 0, 1) + #strings.substring(m.apellido, 0, 1)}">MD</span>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold" th:text="${m.nombre + ' ' + m.apellido}">Nombre Médico</div>
+                                            <small class="text-muted" th:text="${m.numeroLicencia}">LIC-001</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <div><strong>Email:</strong> 
+                                            <span th:text="${m.email}">medico@saludvital.com</span>
+                                        </div>
+                                        <div><strong>Teléfono:</strong> 
+                                            <span th:text="${m.telefono}">+51 999 999 999</span>
+                                        </div>
+                                        <div><strong>Tarifa:</strong> 
+                                            <span th:text="'S/ ' + ${m.tarifaConsulta}">S/ 150.00</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="specialty-badge" th:text="${m.especialidad}">
+                                        Especialidad
+                                    </span>
+                                </td>
+                                <td>
+                                   <span th:class="'status-badge ' + (${m.estado == 'ACTIVO'} ? 'status-active' : (${m.estado == 'INACTIVO'} ? 'status-inactive' : 'status-pending'))">
+    <i th:class="'bi ' + (${m.estado == 'ACTIVO'} ? 'bi-check-circle' : (${m.estado == 'INACTIVO'} ? 'bi-x-circle' : 'bi-clock'))"></i>
+    <span th:text="${m.estado}">ACTIVO</span>
+</span>
+                                </td>
+                                <td>
+                                   <span th:class="'availability-badge ' + (${m.disponible} ? 'available' : 'unavailable')">
+    <i th:class="'bi ' + (${m.disponible} ? 'bi-check-circle' : 'bi-x-circle')"></i>
+    <span th:text="${m.disponible} ? 'Disponible' : 'No disponible'">Disponible</span>
+</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons-small">
+                                        <button class="btn-icon" onclick="viewDoctor('${m.id}')" title="Ver detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn-icon edit" onclick="editDoctor('${m.id}')" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn-icon delete" onclick="deleteDoctor('${m.id}', '${m.nombre}')" title="Eliminar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- No Results -->
+                           <!-- No Results -->
+<tr th:if="${#lists.isEmpty(medicos)}" id="noResultsRow">
+    <td colspan="6">
+        <div class="no-results">
+            <div class="no-results-icon">
+                <i class="bi bi-person-x"></i>
+            </div>
+            <h4>No hay médicos registrados</h4>
+            <p>Comienza agregando un nuevo médico al sistema.</p>
+            <!-- CAMBIA ESTA LÍNEA: -->
+            <a th:href="@{/medicos/registrar}" class="btn btn-primary-custom">
+                <i class="bi bi-person-plus"></i>
+                Registrar Primer Médico
+            </a>
+        </div>
+    </td>
+</tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination-container" th:if="${#lists.size(medicos) > 0}">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="bi bi-heart-pulse footer-logo-icon"></i>
+                    <div>
+                        <h4 class="mb-0">Salud Vital</h4>
+                        <small>Administración Médica</small>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#">Soporte</a>
+                    <a href="#">Contacto</a>
+                    <a href="#">Privacidad</a>
+                    <a href="#">Términos</a>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 Centro de Salud Vital. Sistema de Gestión Hospitalaria v3.0</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calcular estadísticas
+            calculateStats();
+            
+            // Inicializar búsqueda en tiempo real
+            initializeSearch();
+            
+            // Agregar animaciones
+            const fadeElements = document.querySelectorAll('.fade-in-up');
+            fadeElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+        
+        // Calcular estadísticas
+        function calculateStats() {
+            const doctors = document.querySelectorAll('.doctor-row');
+            let activeDoctors = 0;
+            let availableDoctors = 0;
+            const specialties = new Set();
+            
+            doctors.forEach(doctor => {
+                // Contar médicos activos
+                const statusBadge = doctor.querySelector('.status-badge');
+                if (statusBadge && statusBadge.textContent.includes('ACTIVO')) {
+                    activeDoctors++;
+                }
+                
+                // Contar médicos disponibles
+                const availabilityBadge = doctor.querySelector('.availability-badge');
+                if (availabilityBadge && availabilityBadge.textContent.includes('Disponible')) {
+                    availableDoctors++;
+                }
+                
+                // Recolectar especialidades
+                const specialtyBadge = doctor.querySelector('.specialty-badge');
+                if (specialtyBadge) {
+                    specialties.add(specialtyBadge.textContent.trim());
+                }
+            });
+            
+            // Actualizar contadores
+            animateCounter('totalDoctors', doctors.length);
+            animateCounter('activeDoctors', activeDoctors);
+            animateCounter('availableDoctors', availableDoctors);
+            animateCounter('specialtiesCount', specialties.size);
+        }
+        
+        // Animación de contadores
+        function animateCounter(elementId, target) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let current = 0;
+            const targetValue = parseInt(target);
+            if (isNaN(targetValue)) return;
+            
+            const increment = targetValue / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetValue) {
+                    element.textContent = targetValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 30);
+        }
+        
+        // Funciones de acción
+        function viewDoctor(doctorId) {
+            alert(`Ver detalles del médico ID: ${doctorId}`);
+            // window.location.href = `/medicos/${doctorId}`;
+        }
+        
+        function editDoctor(doctorId) {
+            alert(`Editar médico ID: ${doctorId}`);
+            // window.location.href = `/medicos/editar/${doctorId}`;
+        }
+        
+        function deleteDoctor(doctorId, doctorName) {
+            if (confirm(`¿Está seguro que desea eliminar al médico ${doctorName}?`)) {
+                // Aquí enviarías una petición AJAX para eliminar
+                alert(`Médico ${doctorName} eliminado (simulación)`);
+                // Recargar la página o actualizar la tabla
+                location.reload();
+            }
+        }
+        
+        function exportDoctors() {
+            alert('Exportando lista de médicos a Excel...');
+            // Implementar lógica real de exportación
+        }
+        
+        // Búsqueda en tiempo real
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+            
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    filterDoctors(this.value);
+                }, 300);
+            });
+        }
+        
+        function filterDoctors(searchTerm) {
+            const searchTermLower = searchTerm.toLowerCase();
+            const rows = document.querySelectorAll('.doctor-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTermLower)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Mostrar/ocultar mensaje de no resultados
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (visibleCount === 0) {
+                if (!noResultsRow) {
+                    createNoResultsMessage(searchTerm);
+                }
+            } else if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+            
+            // Actualizar contador de médicos
+            document.getElementById('totalDoctors').textContent = visibleCount;
+        }
+        
+        function createNoResultsMessage(searchTerm) {
+            const tbody = document.getElementById('doctorsTableBody');
+            const newRow = document.createElement('tr');
+            newRow.id = 'noResultsRow';
+            newRow.innerHTML = `
+                <td colspan="6">
+                    <div class="no-results">
+                        <div class="no-results-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h4>No se encontraron médicos</h4>
+                        <p>No hay médicos que coincidan con "${searchTerm}"</p>
+                        <button class="btn btn-primary-custom" onclick="clearSearch()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Limpiar búsqueda
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+        }
+        
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.value = '';
+            
+            const rows = document.querySelectorAll('.doctor-row');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+            
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (noResultsRow) noResultsRow.remove();
+            
+            document.getElementById('totalDoctors').textContent = rows.length;
+            calculateStats();
+        }
+        
+        function showFilters() {
+            alert('Mostrar filtros avanzados...');
+            // Implementar modal de filtros
+        }
+        
+        // Ordenar tabla por columna
+        function sortTable(columnIndex) {
+            const table = document.querySelector('.doctors-table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            rows.sort((a, b) => {
+                const aText = a.cells[columnIndex].textContent.trim();
+                const bText = b.cells[columnIndex].textContent.trim();
+                return aText.localeCompare(bText);
+            });
+            
+            // Reordenar filas
+            rows.forEach(row => tbody.appendChild(row));
+        }
+    </script>
+</body>
+</html>

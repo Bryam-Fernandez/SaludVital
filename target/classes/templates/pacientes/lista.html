@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes - Salud Vital</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0077cc;
+            --secondary-blue: #00bcd4;
+            --accent-blue: #0059ff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #2c3e50;
+            --success-green: #28a745;
+            --warning-yellow: #ffc107;
+            --danger-red: #dc3545;
+            --purple: #6f42c1;
+            --teal: #20c997;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f5f8fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navbar-brand i {
+            font-size: 1.8rem;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Main Container */
+        .main-container {
+            padding: 3rem 0;
+            min-height: calc(100vh - 100px);
+        }
+        
+        /* Header Card */
+        .header-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--primary-blue);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .header-title {
+            color: var(--dark-gray);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon.patients {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+        }
+        
+        .stat-icon.age {
+            background: linear-gradient(135deg, var(--success-green) 0%, #1b5e20 100%);
+        }
+        
+        .stat-icon.allergies {
+            background: linear-gradient(135deg, var(--warning-yellow) 0%, #ff8f00 100%);
+        }
+        
+        .stat-icon.diseases {
+            background: linear-gradient(135deg, var(--danger-red) 0%, #c2185b 100%);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 119, 204, 0.2);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-secondary-custom {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-secondary-custom:hover {
+            background: rgba(0, 119, 204, 0.1);
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        
+        .btn-warning-custom {
+            background: linear-gradient(135deg, var(--warning-yellow) 0%, #ff8f00 100%);
+            color: #212529;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn-warning-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.2);
+            color: #212529;
+            text-decoration: none;
+        }
+        
+        /* Search and Filters */
+        .search-filters-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.1);
+        }
+        
+        .search-btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 119, 204, 0.2);
+        }
+        
+        .clear-btn {
+            padding: 0.75rem 2rem;
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .clear-btn:hover {
+            background: rgba(0, 119, 204, 0.1);
+        }
+        
+        .filters-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .filter-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.1);
+        }
+        
+        /* Patients Table Container */
+        .patients-table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .table-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .export-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--success-green) 0%, #1b5e20 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+        
+        /* Patients Table */
+        .patients-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .patients-table thead {
+            background: linear-gradient(135deg, rgba(0, 119, 204, 0.1) 0%, rgba(0, 89, 255, 0.1) 100%);
+        }
+        
+        .patients-table th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-gray);
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+        
+        .patients-table td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+        
+        .patients-table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .patients-table tbody tr:hover {
+            background-color: rgba(0, 119, 204, 0.05);
+            transform: translateX(5px);
+        }
+        
+        /* Patient Avatar */
+        .patient-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .badge-allergy {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: var(--warning-yellow);
+        }
+        
+        .badge-disease {
+            background-color: rgba(220, 53, 69, 0.15);
+            color: var(--danger-red);
+        }
+        
+        .badge-none {
+            background-color: rgba(108, 117, 125, 0.15);
+            color: #6c757d;
+        }
+        
+        /* Tags List */
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            max-width: 250px;
+        }
+        
+        .tag-item {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background: rgba(0, 119, 204, 0.1);
+            color: var(--primary-blue);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Age Indicator */
+        .age-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.4rem 0.8rem;
+            background: rgba(0, 119, 204, 0.1);
+            color: var(--primary-blue);
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        /* Actions */
+        .action-buttons-small {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dee2e6;
+            background-color: white;
+            color: var(--primary-blue);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .btn-icon:hover {
+            background-color: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+            text-decoration: none;
+        }
+        
+        .btn-icon.edit:hover {
+            background-color: var(--warning-yellow);
+            border-color: var(--warning-yellow);
+            color: #212529;
+        }
+        
+        .btn-icon.record:hover {
+            background-color: var(--success-green);
+            border-color: var(--success-green);
+            color: white;
+        }
+        
+        .btn-icon.delete:hover {
+            background-color: var(--danger-red);
+            border-color: var(--danger-red);
+            color: white;
+        }
+        
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .page-item .page-link {
+            padding: 0.5rem 1rem;
+            border: 1px solid #dee2e6;
+            color: var(--primary-blue);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .page-item.active .page-link {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .page-item .page-link:hover {
+            background-color: rgba(0, 119, 204, 0.1);
+            border-color: var(--primary-blue);
+        }
+        
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+        }
+        
+        .no-results-icon {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Footer */
+        .page-footer {
+            background-color: var(--dark-gray);
+            color: white;
+            padding: 2rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-logo-icon {
+            font-size: 1.8rem;
+            color: var(--secondary-blue);
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .patients-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .table-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1.5rem 0;
+            }
+            
+            .header-card {
+                padding: 1.5rem;
+            }
+            
+            .search-filters-section, .patients-table-container {
+                padding: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-primary-custom, .btn-secondary-custom, .btn-warning-custom {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links {
+                justify-content: center;
+            }
+            
+            .patients-table th,
+            .patients-table td {
+                padding: 1rem;
+            }
+            
+            .action-buttons-small {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-row {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0059b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-heart-pulse"></i>
+                Salud Vital
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/users}">
+                            <i class="bi bi-people"></i>
+                            Usuarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/medicos}">
+                            <i class="bi bi-person-badge"></i>
+                            Médicos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/pacientes}">
+                            <i class="bi bi-person-heart"></i>
+                            Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" th:href="@{/logout}">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Salir
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="container">
+            <!-- Header -->
+            <div class="header-card fade-in-up">
+                <div class="header-content">
+                    <div>
+                        <h1 class="header-title">
+                            <i class="bi bi-people-fill" style="color: var(--primary-blue);"></i>
+                            Gestión de Pacientes
+                        </h1>
+                        <p class="header-subtitle">
+                            Administra la información de todos los pacientes registrados en el sistema
+                        </p>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <a th:href="@{/pacientes/nuevo}" class="btn-primary-custom">
+                            <i class="bi bi-person-plus"></i>
+                            Nuevo Paciente
+                        </a>
+                        <a th:href="@{/pacientes/buscar}" class="btn-warning-custom">
+                            <i class="bi bi-pencil"></i>
+                            Editar Paciente
+                        </a>
+                        <button class="btn-secondary-custom" onclick="exportPatients()">
+                            <i class="bi bi-download"></i>
+                            Exportar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-cards fade-in-up">
+                <div class="stat-card">
+                    <div class="stat-icon patients">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div class="stat-value" id="totalPatients" th:text="${#lists.size(pacientes)}">0</div>
+                    <div class="stat-label">Pacientes Registrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon age">
+                        <i class="bi bi-calendar-heart"></i>
+                    </div>
+                    <div class="stat-value" id="averageAge">0</div>
+                    <div class="stat-label">Edad Promedio</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon allergies">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value" id="withAllergies">0</div>
+                    <div class="stat-label">Con Alergias</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon diseases">
+                        <i class="bi bi-virus"></i>
+                    </div>
+                    <div class="stat-value" id="withDiseases">0</div>
+                    <div class="stat-label">Con Enfermedades</div>
+                </div>
+            </div>
+            
+            <!-- Search and Filters -->
+            <div class="search-filters-section fade-in-up">
+                <form method="get" th:action="@{/pacientes}" class="search-form">
+                    <input type="text" name="q" th:value="${q}" 
+                           class="search-input" placeholder="Buscar por nombre, documento o ID..." 
+                           id="searchInput">
+                    <button type="submit" class="search-btn">
+                        <i class="bi bi-search"></i>
+                        Buscar
+                    </button>
+                    <button type="button" class="clear-btn" onclick="clearSearch()">
+                        <i class="bi bi-x-circle"></i>
+                        Limpiar
+                    </button>
+                </form>
+                
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <label class="filter-label">Filtrar por Alergias</label>
+                        <select class="filter-select" id="allergyFilter" onchange="filterTable()">
+                            <option value="all">Todos</option>
+                            <option value="with">Con alergias</option>
+                            <option value="without">Sin alergias</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Filtrar por Enfermedades</label>
+                        <select class="filter-select" id="diseaseFilter" onchange="filterTable()">
+                            <option value="all">Todos</option>
+                            <option value="with">Con enfermedades</option>
+                            <option value="without">Sin enfermedades</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Ordenar por</label>
+                        <select class="filter-select" id="sortFilter" onchange="sortTable()">
+                            <option value="name">Nombre A-Z</option>
+                            <option value="name-desc">Nombre Z-A</option>
+                            <option value="date">Fecha Nac. (Nuevo)</option>
+                            <option value="date-desc">Fecha Nac. (Antiguo)</option>
+                            <option value="id">ID (Menor)</option>
+                            <option value="id-desc">ID (Mayor)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Patients Table -->
+            <div class="patients-table-container fade-in-up">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="bi bi-list-ul"></i>
+                        Listado de Pacientes
+                    </h3>
+                    
+                    <div class="table-controls">
+                        <div class="text-muted" id="resultsCount">
+                            Mostrando <span id="visibleCount" th:text="${#lists.size(pacientes)}">0</span> de 
+                            <span th:text="${#lists.size(pacientes)}">0</span> pacientes
+                        </div>
+                        <button class="export-btn" onclick="exportPatients()">
+                            <i class="bi bi-file-earmark-excel"></i>
+                            Exportar a Excel
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Información</th>
+                                <th>Alergias</th>
+                                <th>Enfermedades</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientsTableBody">
+                            <tr th:each="paciente, i : ${pacientes}" class="fade-in-up patient-row">
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="patient-avatar" th:text="${#strings.substring(paciente.nombre, 0, 1)}">
+                                            P
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold" th:text="${paciente.nombre}">Nombre Paciente</div>
+                                            <div class="text-muted small">
+                                                ID: <span th:text="${paciente.id}">001</span> | 
+                                                DNI: <span th:text="${paciente.numeroIdentificacion}">00000000</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <div><strong>Nacimiento:</strong> 
+                                            <span th:text="${paciente.fechaNacimiento != null ? #temporals.format(paciente.fechaNacimiento, 'dd/MM/yyyy') : 'No registrada'}">
+                                                01/01/1990
+                                            </span>
+                                            <span th:if="${paciente.edad}" class="age-indicator">
+                                                <i class="bi bi-calendar"></i>
+                                                <span th:text="${paciente.edad} + ' años'">35 años</span>
+                                            </span>
+                                        </div>
+                                        <div class="mt-1"><strong>Contacto:</strong> 
+                                            <span th:text="${paciente.telefono ?: 'No registrado'}">999-999-999</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div th:if="${#lists.isEmpty(paciente.alergias)}" class="badge badge-none">
+                                        <i class="bi bi-check-circle"></i>
+                                        Ninguna
+                                    </div>
+                                    <div th:unless="${#lists.isEmpty(paciente.alergias)}">
+                                        <div class="badge badge-allergy mb-2">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <span th:text="${#lists.size(paciente.alergias)}">2</span> alergias
+                                        </div>
+                                        <div class="tags-list">
+                                            <span th:each="alergia : ${paciente.alergias}" class="tag-item">
+                                                <span th:text="${alergia.nombre}">Alergia</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div th:if="${#lists.isEmpty(paciente.enfermedades)}" class="badge badge-none">
+                                        <i class="bi bi-check-circle"></i>
+                                        Ninguna
+                                    </div>
+                                    <div th:unless="${#lists.isEmpty(paciente.enfermedades)}">
+                                        <div class="badge badge-disease mb-2">
+                                            <i class="bi bi-virus"></i>
+                                            <span th:text="${#lists.size(paciente.enfermedades)}">1</span> enfermedades
+                                        </div>
+                                        <div class="tags-list">
+                                            <span th:each="enfermedad : ${paciente.enfermedades}" class="tag-item">
+                                                <span th:text="${enfermedad.nombre}">Enfermedad</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons-small">
+                                        <a th:href="@{/expedientes/{id}(id=${paciente.id})}" class="btn-icon record" title="Ver Expediente">
+                                            <i class="bi bi-file-earmark-medical"></i>
+                                        </a>
+                                        <a th:href="@{'/pacientes/editar/' + ${paciente.id}}" class="btn-icon edit" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+            <button class="btn-icon delete" title="Eliminar"
+        th:attr="data-id=${paciente.id}, data-nombre=${paciente.nombre}"
+        onclick="deletePatient(this.dataset.id, this.dataset.nombre)">
+    <i class="bi bi-trash"></i>
+</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- No Results -->
+                            <tr th:if="${#lists.isEmpty(pacientes)}" id="noResultsRow">
+                                <td colspan="5">
+                                    <div class="no-results">
+                                        <div class="no-results-icon">
+                                            <i class="bi bi-person-x"></i>
+                                        </div>
+                                        <h4>No hay pacientes registrados</h4>
+                                        <p>Comienza agregando nuevos pacientes al sistema.</p>
+                                        <a th:href="@{/pacientes/nuevo}" class="btn-primary-custom">
+                                            <i class="bi bi-person-plus"></i>
+                                            Registrar Primer Paciente
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination-container" th:if="${#lists.size(pacientes) > 0}">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="bi bi-heart-pulse footer-logo-icon"></i>
+                    <div>
+                        <h4 class="mb-0">Salud Vital</h4>
+                        <small>Registro de Pacientes</small>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="#">Soporte</a>
+                    <a href="#">Contacto</a>
+                    <a href="#">Privacidad</a>
+                    <a href="#">Términos</a>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 Centro de Salud Vital. Sistema de Gestión Hospitalaria v3.0</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calcular estadísticas
+            calculateStats();
+            
+            // Inicializar búsqueda en tiempo real
+            initializeSearch();
+            
+            // Agregar animaciones
+            const fadeElements = document.querySelectorAll('.fade-in-up');
+            fadeElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Actualizar contador de resultados
+            updateResultsCount();
+        });
+        
+        // Calcular estadísticas
+        function calculateStats() {
+            const patients = document.querySelectorAll('.patient-row');
+            let totalAge = 0;
+            let withAllergies = 0;
+            let withDiseases = 0;
+            let patientCount = patients.length;
+            
+            patients.forEach(patient => {
+                // Calcular edad promedio (simulado)
+                const ageElement = patient.querySelector('.age-indicator span');
+                if (ageElement) {
+                    const ageText = ageElement.textContent;
+                    const age = parseInt(ageText) || 0;
+                    totalAge += age;
+                }
+                
+                // Contar pacientes con alergias
+                const hasAllergies = patient.querySelector('.badge-allergy');
+                if (hasAllergies) {
+                    withAllergies++;
+                }
+                
+                // Contar pacientes con enfermedades
+                const hasDiseases = patient.querySelector('.badge-disease');
+                if (hasDiseases) {
+                    withDiseases++;
+                }
+            });
+            
+            // Actualizar contadores
+            const averageAge = patientCount > 0 ? Math.round(totalAge / patientCount) : 0;
+            
+            document.getElementById('totalPatients').textContent = patientCount;
+            document.getElementById('averageAge').textContent = averageAge;
+            document.getElementById('withAllergies').textContent = withAllergies;
+            document.getElementById('withDiseases').textContent = withDiseases;
+        }
+        
+        // Búsqueda en tiempo real
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+            
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    filterTable();
+                }, 300);
+            });
+        }
+        
+        function filterTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const allergyFilter = document.getElementById('allergyFilter').value;
+            const diseaseFilter = document.getElementById('diseaseFilter').value;
+            
+            const rows = document.querySelectorAll('.patient-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const hasAllergies = row.querySelector('.badge-allergy');
+                const hasDiseases = row.querySelector('.badge-disease');
+                
+                let shouldShow = true;
+                
+                // Aplicar filtro de búsqueda
+                if (searchTerm && !text.includes(searchTerm)) {
+                    shouldShow = false;
+                }
+                
+                // Aplicar filtro de alergias
+                if (allergyFilter === 'with' && !hasAllergies) {
+                    shouldShow = false;
+                } else if (allergyFilter === 'without' && hasAllergies) {
+                    shouldShow = false;
+                }
+                
+                // Aplicar filtro de enfermedades
+                if (diseaseFilter === 'with' && !hasDiseases) {
+                    shouldShow = false;
+                } else if (diseaseFilter === 'without' && hasDiseases) {
+                    shouldShow = false;
+                }
+                
+                if (shouldShow) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Actualizar contador de resultados
+            updateResultsCount(visibleCount, rows.length);
+            
+            // Mostrar/ocultar mensaje de no resultados
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (visibleCount === 0) {
+                if (!noResultsRow) {
+                    createNoResultsMessage(searchTerm);
+                }
+            } else if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+        }
+        
+        function sortTable() {
+            const sortFilter = document.getElementById('sortFilter').value;
+            const tbody = document.getElementById('patientsTableBody');
+            const rows = Array.from(tbody.querySelectorAll('.patient-row'));
+            
+            rows.sort((a, b) => {
+                switch (sortFilter) {
+                    case 'name':
+                        return a.querySelector('.fw-bold').textContent.localeCompare(b.querySelector('.fw-bold').textContent);
+                    case 'name-desc':
+                        return b.querySelector('.fw-bold').textContent.localeCompare(a.querySelector('.fw-bold').textContent);
+                    case 'id':
+                        return parseInt(a.querySelector('.text-muted span').textContent) - parseInt(b.querySelector('.text-muted span').textContent);
+                    case 'id-desc':
+                        return parseInt(b.querySelector('.text-muted span').textContent) - parseInt(a.querySelector('.text-muted span').textContent);
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Reordenar filas
+            rows.forEach(row => tbody.appendChild(row));
+        }
+        
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('allergyFilter').value = 'all';
+            document.getElementById('diseaseFilter').value = 'all';
+            document.getElementById('sortFilter').value = 'name';
+            
+            filterTable();
+        }
+        
+        function updateResultsCount(visibleCount, totalCount) {
+            const visibleElement = document.getElementById('visibleCount');
+            const resultsElement = document.getElementById('resultsCount');
+            
+            if (visibleCount !== undefined) {
+                visibleElement.textContent = visibleCount;
+                if (visibleCount === 0) {
+                    resultsElement.innerHTML = 'No se encontraron pacientes';
+                } else {
+                    resultsElement.innerHTML = `Mostrando <span id="visibleCount">${visibleCount}</span> de 
+                                               <span>${totalCount}</span> pacientes`;
+                }
+            }
+        }
+        
+        function createNoResultsMessage(searchTerm) {
+            const tbody = document.getElementById('patientsTableBody');
+            const newRow = document.createElement('tr');
+            newRow.id = 'noResultsRow';
+            newRow.innerHTML = `
+                <td colspan="5">
+                    <div class="no-results">
+                        <div class="no-results-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h4>No se encontraron pacientes</h4>
+                        <p th:if="${q}" th:text="'No hay pacientes que coincidan con \"' + ${q} + '\"'">No hay pacientes que coincidan con tu búsqueda</p>
+                        <p th:unless="${q}">No hay pacientes que coincidan con los filtros aplicados.</p>
+                        <button class="btn-primary-custom" onclick="clearSearch()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Limpiar filtros
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+        }
+        
+        function exportPatients() {
+            alert('Exportando lista de pacientes a Excel...');
+            // Implementar lógica real de exportación
+        }
+        
+        function deletePatient(patientId, patientName) {
+            if (confirm(`¿Está seguro que desea eliminar al paciente "${patientName}"? Esta acción no se puede deshacer.`)) {
+                // Simular petición AJAX
+                fetch(`/pacientes/eliminar/${patientId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Paciente eliminado correctamente');
+                        location.reload();
+                    } else {
+                        alert('Error al eliminar el paciente');
+                    }
+                })
+                .catch(error => {
+                    alert('Error de conexión');
+                });
+            }
+        }
+        
+        // Actualizar contadores cuando se filtra
+        document.getElementById('allergyFilter').addEventListener('change', calculateStats);
+        document.getElementById('diseaseFilter').addEventListener('change', calculateStats);
+    </script>
+</body>
+</html>

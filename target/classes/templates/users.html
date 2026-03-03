@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salud Vital - Gestión de Usuarios</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #0077cc;
+            --secondary-blue: #00bcd4;
+            --light-gray: #f8f9fa;
+            --dark-gray: #2c3e50;
+            --success-green: #28a745;
+            --warning-yellow: #ffc107;
+            --danger-red: #dc3545;
+            --purple: #6f42c1;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f8fa;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--dark-gray) 0%, #1a252f 100%);
+            color: white;
+            padding: 1.5rem 0;
+        }
+        
+        .nav-link.active {
+            background-color: var(--primary-blue) !important;
+            color: white !important;
+            border-radius: 8px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table th {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+        }
+        
+        .badge-role {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .badge-admin { background-color: rgba(255, 193, 7, 0.2); color: #d39e00; }
+        .badge-medico { background-color: rgba(40, 167, 69, 0.2); color: var(--success-green); }
+        .badge-paciente { background-color: rgba(111, 66, 193, 0.2); color: var(--purple); }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-0">
+                        <i class="bi bi-people-fill me-2"></i>
+                        Gestión de Usuarios
+                    </h1>
+                    <p class="mb-0 opacity-75">Salud Vital - Sistema Hospitalario</p>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="me-3">Administrador</span>
+                    <div class="user-avatar">AD</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/panel">
+                            <i class="bi bi-house-door me-1"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pacientes">
+                            <i class="bi bi-people me-1"></i> Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/medicos">
+                            <i class="bi bi-person-badge me-1"></i> Médicos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/users">
+                            <i class="bi bi-people-fill me-1"></i> Usuarios
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <!-- Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <div class="text-primary display-6 fw-bold" th:text="${#lists.size(users)}">0</div>
+                    <div class="text-muted">Usuarios Totales</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <div class="text-warning display-6 fw-bold" 
+                         th:text="${#lists.size(users.?[roles != null and roles.contains('ROLE_ADMIN')])}">0</div>
+                    <div class="text-muted">Administradores</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <div class="text-success display-6 fw-bold" 
+                         th:text="${#lists.size(users.?[roles != null and roles.contains('ROLE_MEDICO')])}">0</div>
+                    <div class="text-muted">Médicos</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center">
+                    <div class="text-purple display-6 fw-bold" 
+                         th:text="${#lists.size(users.?[roles != null and roles.contains('ROLE_PACIENTE')])}">0</div>
+                    <div class="text-muted">Pacientes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Identificación</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Fecha Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iterar sobre todos los usuarios -->
+                        <tr th:each="user, stat : ${users}">
+                            <td th:text="${stat.index + 1}"></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-3">
+    <span th:text="${user.firstName != null and user.firstName.length() > 0 
+                    ? #strings.substring(user.firstName, 0, 1) 
+                    : ''} + 
+                   ${user.lastName != null and user.lastName.length() > 0 
+                    ? #strings.substring(user.lastName, 0, 1) 
+                    : ''}">
+        U
+    </span>
+</div>
+                                </div>
+                            </td>
+                            <td th:text="${user.email}"></td>
+                            <td th:text="${user.numeroIdentificacion} ?: '--'"></td>
+                            <td>
+                                <!-- Mostrar el rol principal -->
+                                <span th:if="${user.selectedRole == 'ADMIN'}" class="badge badge-admin">
+                                    <i class="bi bi-shield-check me-1"></i> Administrador
+                                </span>
+                                <span th:if="${user.selectedRole == 'DOCTOR'}" class="badge badge-medico">
+                                    <i class="bi bi-person-badge me-1"></i> Médico
+                                </span>
+                                <span th:if="${user.selectedRole == 'PATIENT'}" class="badge badge-paciente">
+                                    <i class="bi bi-person-heart me-1"></i> Paciente
+                                </span>
+                                <span th:if="${user.selectedRole == null or user.selectedRole == ''}" class="badge bg-secondary">
+                                    Sin rol
+                                </span>
+                            </td>
+                            <td>
+                                <span th:if="${user.activo}" class="text-success">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Activo
+                                </span>
+                                <span th:unless="${user.activo}" class="text-danger">
+                                    <i class="bi bi-x-circle-fill me-1"></i> Inactivo
+                                </span>
+                            </td>
+                          <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" title="Ver detalles">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning ms-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Si no hay usuarios -->
+                        <tr th:if="${#lists.isEmpty(users)}">
+                            <td colspan="8" class="text-center py-5">
+                                <i class="bi bi-people display-4 text-muted mb-3"></i>
+                                <h5 class="text-muted">No hay usuarios registrados</h5>
+                                <p class="text-muted">Comienza creando un nuevo usuario</p>
+                                <a href="/register" class="btn btn-primary">
+                                    <i class="bi bi-person-plus me-1"></i> Crear Usuario
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Info -->
+        <div class="mt-3 text-muted">
+            <small>
+                Mostrando <span class="fw-bold" th:text="${#lists.size(users)}">0</span> usuarios
+            </small>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página de usuarios cargada');
+            
+            // Contar usuarios por tipo
+            const totalUsers = document.querySelectorAll('tbody tr').length - 1;
+            console.log('Total usuarios:', totalUsers > 0 ? totalUsers : 0);
+        });
+    </script>
+</body>
+</html>
