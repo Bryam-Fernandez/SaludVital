@@ -31,4 +31,5 @@ import java.util.Optional;
 	    
 	    // Y el método específico:
 	    List<Paciente> buscarPorMedico(Long medicoId);
+		List<Paciente> obtenerTodos();
 	}

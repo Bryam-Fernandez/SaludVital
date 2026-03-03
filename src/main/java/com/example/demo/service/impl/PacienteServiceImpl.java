@@ -141,6 +141,8 @@ public class PacienteServiceImpl implements PacienteService {
     public List<Paciente> buscarPorDocumentoONombre(String query) {
         return pacienteRepository.buscarPorDocumentoONombre(query);
     }
+    
+
 
     @Override
     @Transactional
@@ -157,4 +159,8 @@ public class PacienteServiceImpl implements PacienteService {
     public Optional<Paciente> buscarPorUsuarioEmail(String email) {
         return pacienteRepository.findByUsuarioEmail(email);
     }
+	@Override
+	public List<Paciente> obtenerTodos() {
+	    return pacienteRepository.findAll();
+	}
 }

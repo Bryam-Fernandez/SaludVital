@@ -30,7 +30,51 @@ public class PacienteController {
     @Autowired
     private UserService userService;
 
- // En tu PacienteController o en un nuevo MedicoPacienteController
+ // LISTAR TODOS LOS PACIENTES (para administradores)
+    @GetMapping
+    public String listarTodosPacientes(Model model, Principal principal) {
+        System.out.println("=== LISTANDO TODOS LOS PACIENTES ===");
+        
+        try {
+            // Verificar si el usuario está autenticado
+            if (principal == null) {
+                System.out.println("Usuario no autenticado");
+                return "redirect:/login";
+            }
+            
+            String username = principal.getName();
+            System.out.println("Usuario autenticado: " + username);
+            
+            // Buscar usuario por email
+            Optional<User> usuario = userService.findByEmail(username);
+            
+            if (usuario.isEmpty()) {
+                System.out.println("Usuario no encontrado en BD: " + username);
+                return "redirect:/login";
+            }
+            
+            User user = usuario.get();
+            System.out.println("Usuario encontrado: " + user.getName());
+            System.out.println("Roles: " + user.getRoles());
+            
+            // Obtener TODOS los pacientes (sin filtrar por rol por ahora)
+            List<Paciente> pacientes = pacienteService.obtenerTodos();
+            System.out.println("Pacientes encontrados: " + pacientes.size());
+            
+            // Agregar atributos al modelo
+            model.addAttribute("pacientes", pacientes);
+            model.addAttribute("titulo", "Gestión de Pacientes");
+            model.addAttribute("q", ""); // Para el campo de búsqueda
+            
+            return "pacientes/lista"; // Esto debe existir en templates/pacientes/lista.html
+            
+        } catch (Exception e) {
+            System.err.println("ERROR: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Error al cargar pacientes: " + e.getMessage());
+            return "error";
+        }
+    }
 
     @GetMapping("/medico/pacientes")
     public String listarPacientesMedico(Model model, Principal principal) {
