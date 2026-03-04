@@ -64,22 +64,31 @@ public class AuthController {
     
     @GetMapping("/panel")
     public String mostrarPanel(Model model, Principal principal) {
-        String email = principal.getName(); 
+        System.out.println("========== ENTRO A /panel ==========");
+        System.out.println("Usuario: " + principal.getName());
         
-        // Opción 1: Usar UserDto (recomendado)
-        UserDto usuarioDto = userService.findUserDtoByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        model.addAttribute("nombre", usuarioDto.getName());
-        
-        // Opción 2: Si necesitas la entidad User para algo específico
-        User usuarioEntity = userService.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Puedes convertir a DTO si lo necesitas
-        UserDto usuarioConvertido = userService.convertToDto(usuarioEntity);
-        
-        model.addAttribute("usuario", usuarioConvertido);
-        return "PanelAdmin";
+        try {
+            String email = principal.getName(); 
+            System.out.println("Email: " + email);
+            
+            UserDto usuarioDto = userService.findUserDtoByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            
+            System.out.println("Usuario encontrado: " + usuarioDto.getName());
+            
+            model.addAttribute("nombre", usuarioDto.getName());
+            model.addAttribute("totalUsuarios", 48);
+            model.addAttribute("totalPacientes", 1248);
+            model.addAttribute("totalMedicos", 56);
+            model.addAttribute("citasHoy", 89);
+            
+            System.out.println("Renderizando vista: PanelAdmin");
+            return "PanelAdmin";
+            
+        } catch (Exception e) {
+            System.out.println("ERROR en /panel: " + e.getMessage());
+            e.printStackTrace();
+            return "error";
+        }
     }
 }

@@ -2,114 +2,372 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8" />
-    <title>Registrar Médico o Administrador</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Médico - Salud Vital</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --primary-teal: #00796b;
+            --secondary-teal: #004d40;
+            --light-teal: #e0f2f1;
+            --accent: #00acc1;
+        }
+        
         body {
-            background: linear-gradient(to right, #e0f7fa, #e1f5fe);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            margin: 0;
         }
-        .form-container {
-            background: #ffffff;
-            padding: 30px 40px;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 105, 92, 0.15);
+        
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 105, 92, 0.2);
             width: 100%;
-            max-width: 450px;
+            max-width: 550px;
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
         }
-        h2 {
-            color: #00695c;
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--secondary-teal) 100%);
+            color: white;
+            padding: 25px 30px;
             text-align: center;
-            margin-bottom: 25px;
+        }
+        
+        .card-header h2 {
             font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
         }
-        label {
+        
+        .card-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        .form-label {
             font-weight: 600;
-            color: #004d40;
+            color: var(--secondary-teal);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
         }
-        .form-control:focus {
-            border-color: #00796b;
-            box-shadow: 0 0 8px rgba(0, 121, 107, 0.3);
+        
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
-        select.form-select {
-            border-color: #00796b;
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-teal);
+            box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.15);
+            outline: none;
         }
-        button.btn-submit {
-            background-color: #00796b;
+        
+        .input-group-text {
+            background: var(--light-teal);
+            border: 2px solid #e0e0e0;
+            border-radius: 10px 0 0 10px;
+            color: var(--primary-teal);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--secondary-teal) 100%);
             color: white;
             font-weight: 600;
-            width: 100%;
+            padding: 12px 25px;
+            border: none;
             border-radius: 30px;
-            padding: 10px;
-            transition: background-color 0.3s ease;
+            width: 100%;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        button.btn-submit:hover {
-            background-color: #004d40;
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 121, 107, 0.3);
         }
-        a.back-link {
+        
+        .btn-register:active {
+            transform: translateY(0);
+        }
+        
+        .back-link {
             display: block;
             text-align: center;
             margin-top: 20px;
-            color: #00796b;
+            color: var(--primary-teal);
             font-weight: 600;
             text-decoration: none;
             transition: color 0.3s ease;
         }
-        a.back-link:hover {
-            color: #004d40;
+        
+        .back-link:hover {
+            color: var(--secondary-teal);
             text-decoration: underline;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        /* Password strength indicator */
+        .password-strength {
+            height: 5px;
+            margin-top: 8px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            overflow: hidden;
+        }
+        
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .strength-weak { background: #dc3545; width: 33%; }
+        .strength-medium { background: #ffc107; width: 66%; }
+        .strength-strong { background: #28a745; width: 100%; }
+        
+        /* Requisitos de contraseña */
+        .requirement {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            color: #6c757d;
+        }
+        
+        .requirement.met {
+            color: #28a745;
+        }
+        
+        .requirement i {
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h2>Registrar Usuario (Admin o Médico)</h2>
-       <form th:action="@{/medicos/guardar-desde-registro}" method="post" th:object="${usuario}">
-    <div class="mb-3">
-        <label for="firstName" class="form-label">Nombre:</label>
-        <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required />
+    <div class="register-card">
+        <div class="card-header">
+            <h2><i class="bi bi-person-badge me-2"></i>Registrar Médico</h2>
+            <p>Complete todos los datos del profesional de salud</p>
+        </div>
+        
+        <div class="card-body">
+            <!-- Mensajes de éxito/error -->
+            <div th:if="${success}" class="alert alert-success">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${success}">Registro exitoso</span>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${error}">Error en el registro</span>
+            </div>
+            
+            <form th:action="@{/medicos/guardar-desde-registro}" method="post" th:object="${usuario}">
+                <!-- Nombre y Apellido -->
+                <div class="form-row mb-3">
+                    <div>
+                        <label class="form-label">
+                            <i class="bi bi-person me-1"></i>Nombre
+                        </label>
+                        <input type="text" class="form-control" th:field="*{firstName}" 
+                               placeholder="Ingrese nombre" required>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">
+                            <i class="bi bi-person me-1"></i>Apellido
+                        </label>
+                        <input type="text" class="form-control" th:field="*{lastName}" 
+                               placeholder="Ingrese apellido" required>
+                    </div>
+                </div>
+                
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-envelope me-1"></i>Correo Electrónico
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" th:field="*{email}" 
+                               placeholder="ejemplo@correo.com" required>
+                    </div>
+                </div>
+                
+                <!-- Contraseña -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-lock me-1"></i>Contraseña
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-key"></i></span>
+                        <input type="password" class="form-control" th:field="*{password}" 
+                               id="password" placeholder="••••••••" required 
+                               oninput="checkPasswordStrength()">
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="requirement" id="reqLength">
+                        <i class="bi bi-circle"></i> Mínimo 8 caracteres
+                    </div>
+                    <div class="requirement" id="reqUppercase">
+                        <i class="bi bi-circle"></i> Al menos una mayúscula
+                    </div>
+                    <div class="requirement" id="reqNumber">
+                        <i class="bi bi-circle"></i> Al menos un número
+                    </div>
+                </div>
+                
+                <!-- Fecha de Nacimiento (OBLIGATORIO) -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-calendar me-1"></i>Fecha de Nacimiento
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                        <input type="date" class="form-control" th:field="*{fechaNacimiento}" 
+                               required>
+                    </div>
+                </div>
+                
+                <!-- Número de Identificación (OBLIGATORIO) -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-card-text me-1"></i>Número de Identificación
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                        <input type="text" class="form-control" th:field="*{numeroIdentificacion}" 
+                               placeholder="DNI, Pasaporte, etc." required>
+                    </div>
+                </div>
+                
+                <!-- Rol (solo MÉDICO) -->
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-person-badge me-1"></i>Rol
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-shield"></i></span>
+                        <select class="form-select" th:field="*{selectedRole}" required>
+                            <option value="" disabled selected>Seleccione un rol</option>
+                            <option value="ROLE_MEDICO">MÉDICO</option>
+                        </select>
+                    </div>
+                </div>
+                      
+                <button type="submit" class="btn-register">
+                    <i class="bi bi-person-plus"></i>
+                    Registrar Médico
+                </button>
+            </form>
+            
+            <a th:href="@{/login}" class="back-link">
+                <i class="bi bi-arrow-left me-1"></i>Volver al Login
+            </a>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label for="lastName" class="form-label">Apellido:</label>
-        <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required />
-    </div>
-
-    <div class="mb-3">
-        <label for="email" class="form-label">Correo Electrónico:</label>
-        <input type="email" id="email" th:field="*{email}" class="form-control" required />
-    </div>
-
-    <div class="mb-3">
-        <label for="password" class="form-label">Contraseña:</label>
-        <input type="password" id="password" th:field="*{password}" class="form-control" required />
-    </div>
-
-    <div class="mb-4">
-        <label for="selectedRole" class="form-label">Rol:</label>
-        <select id="selectedRole" th:field="*{selectedRole}" class="form-select" required>
-            <option value="" disabled selected>Seleccione un rol</option>
-            <option th:value="ROLE_MEDICO">MÉDICO</option>
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary-custom">
-        <i class="bi bi-save"></i>
-        Registrar Médico
-    </button>
-</form>
-
-        <a th:href="@{/login}" class="back-link">← Volver al Login</a>
-    </div>
-
+    
+    <script>
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('strengthBar');
+            
+            const hasMinLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            
+            // Actualizar requisitos
+            updateRequirement('reqLength', hasMinLength);
+            updateRequirement('reqUppercase', hasUppercase);
+            updateRequirement('reqNumber', hasNumber);
+            
+            // Calcular fortaleza
+            let strength = 0;
+            if (hasMinLength) strength += 33;
+            if (hasUppercase) strength += 33;
+            if (hasNumber) strength += 34;
+            
+            strengthBar.style.width = strength + '%';
+            
+            if (strength <= 33) {
+                strengthBar.className = 'strength-bar strength-weak';
+            } else if (strength <= 66) {
+                strengthBar.className = 'strength-bar strength-medium';
+            } else {
+                strengthBar.className = 'strength-bar strength-strong';
+            }
+        }
+        
+        function updateRequirement(elementId, isMet) {
+            const element = document.getElementById(elementId);
+            const icon = element.querySelector('i');
+            
+            if (isMet) {
+                element.classList.add('met');
+                icon.className = 'bi bi-check-circle-fill';
+            } else {
+                element.classList.remove('met');
+                icon.className = 'bi bi-circle';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            checkPasswordStrength();
+        });
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

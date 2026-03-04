@@ -67,33 +67,42 @@ public class MedicoController {
         System.out.println("Email: " + userDto.getEmail());
         System.out.println("Nombre: " + userDto.getFirstName());
         System.out.println("Apellido: " + userDto.getLastName());
+        System.out.println("Fecha Nacimiento: " + userDto.getFechaNacimiento());
+        System.out.println("Identificación: " + userDto.getNumeroIdentificacion());
         System.out.println("Rol: " + userDto.getSelectedRole());
         
         try {
             // Validar que el rol sea MÉDICO
             if (!"ROLE_MEDICO".equals(userDto.getSelectedRole())) {
-                System.out.println("ERROR: Rol incorrecto - " + userDto.getSelectedRole());
                 ra.addFlashAttribute("error", "Este formulario es solo para registrar médicos");
                 return "redirect:/medicos/registrar";
             }
             
             // Validaciones básicas
             if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
-                System.out.println("ERROR: Email vacío");
                 ra.addFlashAttribute("error", "El email es obligatorio para crear el usuario del médico.");
                 return "redirect:/medicos/registrar";
             }
             
             if (userDto.getPassword() == null || userDto.getPassword().isBlank()) {
-                System.out.println("ERROR: Password vacío");
                 ra.addFlashAttribute("error", "La contraseña es obligatoria.");
+                return "redirect:/medicos/registrar";
+            }
+
+            // Validar campos obligatorios para la tabla users
+            if (userDto.getFechaNacimiento() == null) {
+                ra.addFlashAttribute("error", "La fecha de nacimiento es obligatoria.");
+                return "redirect:/medicos/registrar";
+            }
+            
+            if (userDto.getNumeroIdentificacion() == null || userDto.getNumeroIdentificacion().isBlank()) {
+                ra.addFlashAttribute("error", "El número de identificación es obligatorio.");
                 return "redirect:/medicos/registrar";
             }
 
             // Verificar si el email ya existe
             Optional<User> usuarioExistente = userRepository.findByEmail(userDto.getEmail());
             if (usuarioExistente.isPresent()) {
-                System.out.println("ERROR: Email ya existe - " + userDto.getEmail());
                 ra.addFlashAttribute("error", "Ya existe un usuario con el email: " + userDto.getEmail());
                 return "redirect:/medicos/registrar";
             }
@@ -105,11 +114,11 @@ public class MedicoController {
             medico.setEmail(userDto.getEmail());
             
             // VALORES POR DEFECTO OBLIGATORIOS
-            medico.setNumeroLicencia("PENDIENTE-" + System.currentTimeMillis()); // Temporal
-            medico.setTelefono("PENDIENTE"); // Temporal
-            medico.setEspecialidad(Especialidad.MEDICINA_GENERAL); // Por defecto
-            medico.setTarifaConsulta(new BigDecimal("150.00")); // Por defecto
-            medico.setDisponible(true); // Por defecto
+            medico.setNumeroLicencia("PENDIENTE-" + System.currentTimeMillis());
+            medico.setTelefono("PENDIENTE");
+            medico.setEspecialidad(Especialidad.MEDICINA_GENERAL);
+            medico.setTarifaConsulta(new BigDecimal("150.00"));
+            medico.setDisponible(true);
 
             // Crear usuario
             Role rolMedico = roleRepository.findByName("ROLE_MEDICO")
@@ -121,6 +130,10 @@ public class MedicoController {
             user.setName(userDto.getFirstName() + " " + userDto.getLastName());
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
             user.getRoles().add(rolMedico);
+            
+            // 🔴 AGREGAR LOS CAMPOS QUE FALTABAN
+            user.setFechaNacimiento(userDto.getFechaNacimiento());
+            user.setNumeroIdentificacion(userDto.getNumeroIdentificacion());
             
             // Guardar usuario primero
             System.out.println("Guardando usuario...");

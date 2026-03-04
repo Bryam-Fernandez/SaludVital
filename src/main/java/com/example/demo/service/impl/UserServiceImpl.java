@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveUser(UserDto userDto) {
-        // Crear usuario
+        // 1. Crear usuario
         User user = new User();
         user.setName(userDto.getFirstName() + " " + userDto.getLastName());
         user.setEmail(userDto.getEmail());
@@ -47,22 +47,29 @@ public class UserServiceImpl implements UserService {
         user.setNumeroIdentificacion(userDto.getNumeroIdentificacion());
         user.setFechaNacimiento(userDto.getFechaNacimiento());
 
-        // Asignar rol de paciente por defecto
+        // 2. Buscar o crear el rol PACIENTE
         Role role = roleRepository.findByName("ROLE_PACIENTE")
-                .orElseThrow(() -> new RuntimeException("Rol PACIENTE no encontrado"));
+        	    .orElseGet(() -> {
+        	        Role nuevoRol = new Role();
+        	        nuevoRol.setName("ROLE_PACIENTE"); // 👈 CON ROLE_
+        	        return roleRepository.save(nuevoRol);
+        	    });
+
+        // 3. Asignar rol al usuario
         user.getRoles().add(role);
 
-        User savedUser = userRepository.save(user); 
+        // 4. Guardar usuario
+        User savedUser = userRepository.save(user);
 
-        // Crear paciente asociado
+        // 5. Crear paciente asociado
         Paciente paciente = new Paciente();
         paciente.setNombre(userDto.getFirstName() + " " + userDto.getLastName());
         paciente.setNumeroIdentificacion(userDto.getNumeroIdentificacion());
         paciente.setFechaNacimiento(userDto.getFechaNacimiento());
-        paciente.setUsuario(user); 
+        paciente.setUsuario(user);
         pacienteRepository.save(paciente);
     }
-
+    
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);

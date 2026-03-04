@@ -167,6 +167,110 @@
             margin: 0;
         }
         
+        /* Demo Credentials Section - NUEVO */
+        .demo-credentials {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .demo-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .demo-title i {
+            font-size: 1.3rem;
+        }
+        
+        .credential-box {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .credential-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s ease;
+        }
+        
+        .credential-item:hover {
+            transform: translateX(5px);
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .role-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .role-badge.doctor {
+            background: #28a745;
+        }
+        
+        .role-badge.patient {
+            background: #ffc107;
+            color: #2c3e50;
+        }
+        
+        .credential-details {
+            flex: 1;
+        }
+        
+        .credential-role {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .credential-data {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .credential-data span i {
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
         .login-right {
             padding: 50px;
             display: flex;
@@ -460,6 +564,11 @@
                 align-items: flex-start;
                 gap: 15px;
             }
+            
+            .credential-data {
+                flex-direction: column;
+                gap: 5px;
+            }
         }
         
         /* Animation for form elements */
@@ -533,6 +642,50 @@
                                 <h5>Acceso 24/7</h5>
                                 <p>Disponible en cualquier momento desde cualquier dispositivo</p>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Demo Credentials Section -->
+                    <div class="demo-credentials">
+                        <div class="demo-title">
+                            <i class="bi bi-person-badge"></i>
+                            <span>Credenciales de demostración</span>
+                        </div>
+                        
+                        <div class="credential-box">
+                            <!-- Doctor Credentials -->
+                            <div class="credential-item">
+                                <div class="role-badge doctor">
+                                    <i class="bi bi-person-badge"></i>
+                                </div>
+                                <div class="credential-details">
+                                    <div class="credential-role">👨‍⚕️ Médico</div>
+                                    <div class="credential-data">
+                                        <span><i class="bi bi-envelope"></i> doc@gmail.com</span>
+                                        <span><i class="bi bi-key"></i> Doc12345678</span>
+                                    </div>
+                                </div>
+                                <button class="copy-btn" onclick="copyCredentials('doc@gmail.com', 'Doc12345678')" title="Copiar credenciales">
+                                    <i class="bi bi-files"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Patient Credentials -->
+                            <div class="credential-item">
+                                <div class="role-badge patient">
+                                    <i class="bi bi-person-heart"></i>
+                                </div>
+                                <div class="credential-details">
+                                    <div class="credential-role">🧑 Paciente</div>
+                                    <div class="credential-data">
+                                        <span><i class="bi bi-envelope"></i> (Regístrate gratis)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px; font-size: 0.85rem; opacity: 0.8; text-align: center;">
+                            <i class="bi bi-info-circle"></i> Usa estas credenciales para probar el rol de médico
                         </div>
                     </div>
                 </div>
@@ -659,6 +812,39 @@
                 eyeIcon.classList.remove('bi-eye-slash');
                 eyeIcon.classList.add('bi-eye');
             }
+        }
+        
+        // Copy credentials function
+        function copyCredentials(email, password) {
+            const textToCopy = `Email: ${email}\nContraseña: ${password}`;
+            
+            // Usar el API moderna de portapapeles
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Mostrar notificación temporal
+                const notification = document.createElement('div');
+                notification.className = 'success-message';
+                notification.style.position = 'fixed';
+                notification.style.top = '20px';
+                notification.style.right = '20px';
+                notification.style.zIndex = '9999';
+                notification.style.maxWidth = '300px';
+                notification.innerHTML = `
+                    <i class="bi bi-check-circle-fill" style="color: var(--success-green);"></i>
+                    <div>
+                        <h6 class="mb-1">¡Credenciales copiadas!</h6>
+                        <p class="mb-0 small">Email: ${email}</p>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+                
+                // Eliminar después de 3 segundos
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+                alert('Presiona Ctrl+C para copiar:\n' + textToCopy);
+            });
         }
         
         // Form validation

@@ -707,51 +707,56 @@
     <!-- Doctor Layout -->
     <div class="doctor-layout">
         <!-- Sidebar -->
-        <aside class="doctor-sidebar">
-            <div class="doctor-profile">
-                <div class="doctor-avatar">
-                    <span th:text="${#strings.substring(medico.nombre, 0, 1) + #strings.substring(medico.apellido, 0, 1)}">PC</span>
-                </div>
-                <h3 class="doctor-name" th:text="${medico.nombre + ' ' + medico.apellido}">Pepe Crillo</h3>
-                <div class="doctor-specialty" th:text="${medico.especialidad}">NEUROLOGIA</div>
-            </div>
-            
-            <div class="doctor-info">
-                <div class="info-item">
-                    <span class="info-label">Licencia</span>
-                    <span class="info-value" th:text="${medico.numeroLicencia}">Jastrin-RGD-RF</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Email</span>
-                    <span class="info-value" th:text="${medico.email}">Pc@gmail.com</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Teléfono</span>
-                    <span class="info-value" th:text="${medico.telefono}">546750787</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Estado</span>
-                    <span class="info-value" th:text="${medico.estado}">ACTIVO</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Disponibilidad</span>
-                    <span class="info-value">
-                        <span th:if="${medico.disponible}" class="availability-badge available">
-                            <i class="bi bi-check-circle"></i>
-                            Disponible
-                        </span>
-                        <span th:unless="${medico.disponible}" class="availability-badge unavailable">
-                            <i class="bi bi-x-circle"></i>
-                            No disponible
-                        </span>
-                    </span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Tarifa</span>
-                    <span class="info-value" th:text="'S/ ' + ${medico.tarifaConsulta}">S/ 200.00</span>
-                </div>
-            </div>
-            
+     <aside class="doctor-sidebar">
+    <div class="doctor-profile">
+        <div class="doctor-avatar">
+            <span th:if="${medico != null and medico.nombre != null and medico.apellido != null}" 
+                  th:text="${#strings.substring(medico.nombre, 0, 1) + #strings.substring(medico.apellido, 0, 1)}">M</span>
+            <span th:if="${medico == null or medico.nombre == null or medico.apellido == null}">M</span>
+        </div>
+        <h3 class="doctor-name" th:text="${medico != null ? (medico.nombre + ' ' + medico.apellido) : 'Médico'}">Médico</h3>
+        <div class="doctor-specialty" th:text="${medico != null ? medico.especialidad : 'Sin especialidad'}">NEUROLOGIA</div>
+    </div>
+    
+    <div class="doctor-info">
+        <div class="info-item">
+            <span class="info-label">Licencia</span>
+            <span class="info-value" th:text="${medico != null ? medico.numeroLicencia : 'N/A'}">Jastrin-RGD-RF</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value" th:text="${medico != null ? medico.email : 'N/A'}">Pc@gmail.com</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Teléfono</span>
+            <span class="info-value" th:text="${medico != null ? medico.telefono : 'N/A'}">546750787</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Estado</span>
+            <span class="info-value" th:text="${medico != null ? medico.estado : 'N/A'}">ACTIVO</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Disponibilidad</span>
+            <span class="info-value">
+                <span th:if="${medico != null and medico.disponible}" class="availability-badge available">
+                    <i class="bi bi-check-circle"></i>
+                    Disponible
+                </span>
+                <span th:if="${medico != null and !medico.disponible}" class="availability-badge unavailable">
+                    <i class="bi bi-x-circle"></i>
+                    No disponible
+                </span>
+                <span th:if="${medico == null}" class="availability-badge unavailable">
+                    <i class="bi bi-x-circle"></i>
+                    No disponible
+                </span>
+            </span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Tarifa</span>
+            <span class="info-value" th:text="${medico != null ? ('S/ ' + medico.tarifaConsulta) : 'S/ 0'}">S/ 200.00</span>
+        </div>
+    </div>
             <ul class="sidebar-menu">
                 <li class="menu-item">
                     <a th:href="@{/medico/panel}" class="menu-link active">
@@ -804,7 +809,7 @@
             <!-- Top Bar -->
             <header class="doctor-topbar">
                 <div class="welcome-text">
-                    <h1>Bienvenido, Dr. <span th:text="${medico.nombre}">Pepe</span></h1>
+                 <h1>Bienvenido, Dr. <span th:text="${medico != null ? medico.nombre : 'Médico'}">Médico</span></h1>
                     <p>Panel de control médico - Gestión de pacientes y consultas</p>
                 </div>
                 

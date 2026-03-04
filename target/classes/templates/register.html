@@ -305,7 +305,7 @@
             color: #6c757d;
         }
         
-        /* Success Message */
+        /* Success & Error Messages */
         .success-message {
             background-color: rgba(40, 167, 69, 0.1);
             border-left: 4px solid var(--success-green);
@@ -316,6 +316,23 @@
             align-items: center;
             gap: 15px;
             animation: slideIn 0.5s ease-out;
+        }
+        
+        .error-message-global {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid var(--danger-red);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .error-message-global i {
+            font-size: 1.5rem;
+            color: var(--danger-red);
         }
         
         @keyframes slideIn {
@@ -408,7 +425,7 @@
             gap: 10px;
         }
         
-        .btn-register:hover {
+        .btn-register:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 119, 204, 0.3);
         }
@@ -650,11 +667,20 @@
                     </div>
                     
                     <!-- Success Message -->
-                    <div th:if="${param.success}" class="success-message">
+                    <div th:if="${success}" class="success-message">
                         <i class="bi bi-check-circle-fill"></i>
                         <div>
                             <h5 class="mb-1">¡Registro Exitoso!</h5>
                             <p class="mb-0">Tu cuenta ha sido creada. Ya puedes iniciar sesión.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Error Message -->
+                    <div th:if="${error}" class="error-message-global">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <div>
+                            <h5 class="mb-1">Error en el registro</h5>
+                            <p class="mb-0" th:text="${error}"></p>
                         </div>
                     </div>
                     
@@ -667,14 +693,14 @@
                                 <div class="input-group-custom">
                                     <i class="bi bi-person input-icon"></i>
                                     <input type="text" 
-       class="form-control-custom" 
-       th:field="*{firstName}"
-       id="firstName"
-       placeholder="Tu nombre"
-       required
-       oninput="validateForm()">
+                                           class="form-control-custom" 
+                                           th:field="*{firstName}"
+                                           id="firstName"
+                                           placeholder="Tu nombre"
+                                           required
+                                           oninput="validateForm()">
                                 </div>
-                                <div class="error-message" id="nameError" style="display: none;">
+                                <div class="error-message" id="nameError" style="display: none; color: var(--danger-red); font-size: 0.9rem; margin-top: 5px;">
                                     <i class="bi bi-exclamation-circle"></i>
                                     El nombre debe contener solo letras
                                 </div>
@@ -685,13 +711,12 @@
                                 <div class="input-group-custom">
                                     <i class="bi bi-person input-icon"></i>
                                     <input type="text" 
-       class="form-control-custom" 
-       th:field="*{lastName}"
-       id="lastName"
-       placeholder="Tu apellido"
-       required
-       oninput="validateForm()">
-
+                                           class="form-control-custom" 
+                                           th:field="*{lastName}"
+                                           id="lastName"
+                                           placeholder="Tu apellido"
+                                           required
+                                           oninput="validateForm()">
                                 </div>
                             </div>
                         </div>
@@ -701,15 +726,15 @@
                             <label class="form-label-custom">Correo Electrónico</label>
                             <div class="input-group-custom">
                                 <i class="bi bi-envelope input-icon"></i>
-                               <input type="email" 
-       class="form-control-custom" 
-       th:field="*{email}"
-       id="email"
-       placeholder="correo@ejemplo.com"
-       required
-       oninput="validateForm()">
+                                <input type="email" 
+                                       class="form-control-custom" 
+                                       th:field="*{email}"
+                                       id="email"
+                                       placeholder="correo@ejemplo.com"
+                                       required
+                                       oninput="validateForm()">
                             </div>
-                            <div class="error-message" id="emailError" style="display: none;">
+                            <div class="error-message" id="emailError" style="display: none; color: var(--danger-red); font-size: 0.9rem; margin-top: 5px;">
                                 <i class="bi bi-exclamation-circle"></i>
                                 Por favor, ingresa un correo electrónico válido
                             </div>
@@ -721,12 +746,12 @@
                             <div class="input-group-custom">
                                 <i class="bi bi-lock input-icon"></i>
                                 <input type="password" 
-       class="form-control-custom" 
-       th:field="*{password}"
-       id="password"
-       placeholder="Crea una contraseña segura"
-       required
-       oninput="validateForm()">
+                                       class="form-control-custom" 
+                                       th:field="*{password}"
+                                       id="password"
+                                       placeholder="Crea una contraseña segura"
+                                       required
+                                       oninput="validateForm()">
                                 <button type="button" class="password-toggle" onclick="togglePassword()">
                                     <i class="bi bi-eye" id="eyeIcon"></i>
                                 </button>
@@ -760,14 +785,14 @@
                             <div class="input-group-custom">
                                 <i class="bi bi-card-text input-icon"></i>
                                 <input type="text" 
-       class="form-control-custom" 
-       th:field="*{numeroIdentificacion}"
-       id="numeroIdentificacion"
-       placeholder="DNI, Pasaporte, etc."
-       required
-       oninput="validateForm()">
+                                       class="form-control-custom" 
+                                       th:field="*{numeroIdentificacion}"
+                                       id="numeroIdentificacion"
+                                       placeholder="DNI, Pasaporte, etc."
+                                       required
+                                       oninput="validateForm()">
                             </div>
-                            <div class="error-message" id="idError" style="display: none;">
+                            <div class="error-message" id="idError" style="display: none; color: var(--danger-red); font-size: 0.9rem; margin-top: 5px;">
                                 <i class="bi bi-exclamation-circle"></i>
                                 Solo números y letras, sin espacios ni caracteres especiales
                             </div>
@@ -779,13 +804,13 @@
                             <div class="input-group-custom">
                                 <i class="bi bi-calendar input-icon"></i>
                                 <input type="date" 
-       class="form-control-custom" 
-       th:field="*{fechaNacimiento}"
-       id="fechaNacimiento"
-       required
-       onchange="validateForm()">
+                                       class="form-control-custom" 
+                                       th:field="*{fechaNacimiento}"
+                                       id="fechaNacimiento"
+                                       required
+                                       onchange="validateForm()">
                             </div>
-                            <div class="error-message" id="dateError" style="display: none;">
+                            <div class="error-message" id="dateError" style="display: none; color: var(--danger-red); font-size: 0.9rem; margin-top: 5px;">
                                 <i class="bi bi-exclamation-circle"></i>
                                 Debes tener al menos 18 años para registrarte
                             </div>
@@ -841,338 +866,342 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-   <script>
-    // Toggle password visibility
-    function togglePassword() {
-        const passwordInput = document.getElementById('password');
-        const eyeIcon = document.getElementById('eyeIcon');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            eyeIcon.classList.remove('bi-eye');
-            eyeIcon.classList.add('bi-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            eyeIcon.classList.remove('bi-eye-slash');
-            eyeIcon.classList.add('bi-eye');
-        }
-    }
-    
-    // Validate name
-    function validateName(inputId, errorId) {
-        const input = document.getElementById(inputId);
-        const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/;
-        
-        if (!input) return false;
-        
-        const value = input.value.trim();
-        
-        if (!value) {
-            input.style.borderColor = 'var(--danger-red)';
-            return false;
-        }
-        
-        if (!nameRegex.test(value)) {
-            input.style.borderColor = 'var(--danger-red)';
-            return false;
-        } else {
-            input.style.borderColor = '';
-            return true;
-        }
-    }
-    
-    // Validate email
-    function validateEmail() {
-        const input = document.getElementById('email');
-        const emailError = document.getElementById('emailError');
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (!input) return false;
-        
-        const value = input.value.trim();
-        
-        if (!value) {
-            input.style.borderColor = 'var(--danger-red)';
-            emailError.style.display = 'flex';
-            return false;
-        }
-        
-        if (!emailRegex.test(value)) {
-            input.style.borderColor = 'var(--danger-red)';
-            emailError.style.display = 'flex';
-            return false;
-        } else {
-            input.style.borderColor = '';
-            emailError.style.display = 'none';
-            return true;
-        }
-    }
-    
-    // Validate password
-    function validatePassword() {
-        const input = document.getElementById('password');
-        
-        if (!input) return false;
-        
-        const password = input.value;
-        const strengthBar = document.getElementById('passwordStrengthBar');
-        
-        // Check requirements
-        const hasMinLength = password.length >= 8;
-        const hasUppercase = /[A-Z]/.test(password);
-        const hasNumber = /\d/.test(password);
-        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-        
-        // Update requirement indicators
-        updateRequirement('reqLength', hasMinLength);
-        updateRequirement('reqUppercase', hasUppercase);
-        updateRequirement('reqNumber', hasNumber);
-        updateRequirement('reqSpecial', hasSpecial);
-        
-        // Calculate strength
-        let strength = 0;
-        if (hasMinLength) strength += 25;
-        if (hasUppercase) strength += 25;
-        if (hasNumber) strength += 25;
-        if (hasSpecial) strength += 25;
-        
-        // Update strength bar
-        if (strengthBar) {
-            strengthBar.style.width = strength + '%';
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
             
-            // Update color based on strength
-            if (strength <= 25) {
-                strengthBar.className = 'password-strength-bar password-strength-weak';
-            } else if (strength <= 50) {
-                strengthBar.className = 'password-strength-bar password-strength-medium';
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('bi-eye');
+                eyeIcon.classList.add('bi-eye-slash');
             } else {
-                strengthBar.className = 'password-strength-bar password-strength-strong';
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('bi-eye-slash');
+                eyeIcon.classList.add('bi-eye');
             }
         }
         
-        // Validar si cumple todos los requisitos
-        const isValid = hasMinLength && hasUppercase && hasNumber && hasSpecial;
-        
-        // Cambiar color del borde según validación
-        if (!isValid && password.length > 0) {
-            input.style.borderColor = 'var(--danger-red)';
-        } else if (isValid) {
-            input.style.borderColor = '';
-        } else {
-            input.style.borderColor = 'var(--danger-red)';
-        }
-        
-        return isValid;
-    }
-    
-    // Update requirement indicator
-    function updateRequirement(elementId, isMet) {
-        const element = document.getElementById(elementId);
-        if (!element) return;
-        
-        const icon = element.querySelector('i');
-        
-        if (isMet) {
-            element.classList.add('met');
-            element.classList.remove('unmet');
-            icon.className = 'bi bi-check-circle-fill';
-            icon.style.color = 'var(--success-green)';
-        } else {
-            element.classList.add('unmet');
-            element.classList.remove('met');
-            icon.className = 'bi bi-circle';
-            icon.style.color = '#6c757d';
-        }
-    }
-    
-    // Validate identification number
-    function validateIdentification() {
-        const input = document.getElementById('numeroIdentificacion');
-        const idError = document.getElementById('idError');
-        const idRegex = /^[A-Za-z0-9]+$/;
-        
-        if (!input) return false;
-        
-        const value = input.value.trim();
-        
-        if (!value) {
-            input.style.borderColor = 'var(--danger-red)';
-            idError.style.display = 'flex';
-            return false;
-        }
-        
-        if (!idRegex.test(value)) {
-            input.style.borderColor = 'var(--danger-red)';
-            idError.style.display = 'flex';
-            return false;
-        } else {
-            input.style.borderColor = '';
-            idError.style.display = 'none';
-            return true;
-        }
-    }
-    
-    // Validate birth date
-    function validateBirthDate() {
-        const input = document.getElementById('fechaNacimiento');
-        const dateError = document.getElementById('dateError');
-        
-        if (!input) return false;
-        
-        const value = input.value;
-        
-        if (!value) {
-            input.style.borderColor = 'var(--danger-red)';
-            dateError.style.display = 'flex';
-            dateError.innerHTML = '<i class="bi bi-exclamation-circle"></i> La fecha de nacimiento es requerida';
-            return false;
-        }
-        
-        const birthDate = new Date(value);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        
-        if (age < 18) {
-            input.style.borderColor = 'var(--danger-red)';
-            dateError.style.display = 'flex';
-            dateError.innerHTML = '<i class="bi bi-exclamation-circle"></i> Debes tener al menos 18 años para registrarte';
-            return false;
-        } else {
-            input.style.borderColor = '';
-            dateError.style.display = 'none';
-            return true;
-        }
-    }
-    
-    // Validate terms checkbox
-    function validateTerms() {
-        const termsCheckbox = document.getElementById('terms');
-        return termsCheckbox ? termsCheckbox.checked : false;
-    }
-    
-    // Validate entire form
-    function validateForm() {
-        // Validar todos los campos
-        const isFirstNameValid = validateName('firstName');
-        const isLastNameValid = validateName('lastName');
-        const isEmailValid = validateEmail();
-        const isPasswordValid = validatePassword();
-        const isIdValid = validateIdentification();
-        const isDateValid = validateBirthDate();
-        const isTermsValid = validateTerms();
-        
-        // Verificar si todos son válidos
-        const allValid = isFirstNameValid && 
-                        isLastNameValid && 
-                        isEmailValid && 
-                        isPasswordValid && 
-                        isIdValid && 
-                        isDateValid && 
-                        isTermsValid;
-        
-        // Actualizar botón
-        const registerBtn = document.getElementById('registerBtn');
-        if (registerBtn) {
-            if (allValid) {
-                registerBtn.disabled = false;
-                registerBtn.innerHTML = '<i class="bi bi-person-plus"></i> Crear Cuenta';
-                registerBtn.style.opacity = '1';
-                registerBtn.style.cursor = 'pointer';
+        // Validate name
+        function validateName(inputId) {
+            const input = document.getElementById(inputId);
+            const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/;
+            
+            if (!input) return false;
+            
+            const value = input.value.trim();
+            
+            if (!value) {
+                input.style.borderColor = 'var(--danger-red)';
+                return false;
+            }
+            
+            if (!nameRegex.test(value)) {
+                input.style.borderColor = 'var(--danger-red)';
+                return false;
             } else {
-                registerBtn.disabled = true;
-                registerBtn.innerHTML = '<i class="bi bi-lock"></i> Completa todos los campos';
-                registerBtn.style.opacity = '0.6';
-                registerBtn.style.cursor = 'not-allowed';
+                input.style.borderColor = '';
+                return true;
             }
         }
         
-        return allValid;
-    }
-    
-    // Initialize form validation
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Formulario cargado, inicializando validación...');
-        
-        // Agregar event listeners a todos los campos
-        const inputs = document.querySelectorAll('input[required]');
-        inputs.forEach(input => {
-            input.addEventListener('input', validateForm);
-            input.addEventListener('change', validateForm);
-            input.addEventListener('blur', validateForm);
-        });
-        
-        // Agregar event listener al checkbox
-        const termsCheckbox = document.getElementById('terms');
-        if (termsCheckbox) {
-            termsCheckbox.addEventListener('change', validateForm);
+        // Validate email
+        function validateEmail() {
+            const input = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!input) return false;
+            
+            const value = input.value.trim();
+            
+            if (!value) {
+                input.style.borderColor = 'var(--danger-red)';
+                if (emailError) emailError.style.display = 'flex';
+                return false;
+            }
+            
+            if (!emailRegex.test(value)) {
+                input.style.borderColor = 'var(--danger-red)';
+                if (emailError) emailError.style.display = 'flex';
+                return false;
+            } else {
+                input.style.borderColor = '';
+                if (emailError) emailError.style.display = 'none';
+                return true;
+            }
         }
         
-        // Validación inicial
-        setTimeout(() => {
-            validateForm();
-        }, 100);
-        
-        // Manejar el envío del formulario
-        const form = document.getElementById('registrationForm');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                if (!validateForm()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Mostrar alerta
-                    alert('Por favor, completa todos los campos correctamente antes de enviar el formulario.');
-                    
-                    // Encontrar el primer campo inválido
-                    const fields = [
-                        { id: 'firstName', isValid: validateName('firstName') },
-                        { id: 'lastName', isValid: validateName('lastName') },
-                        { id: 'email', isValid: validateEmail() },
-                        { id: 'password', isValid: validatePassword() },
-                        { id: 'numeroIdentificacion', isValid: validateIdentification() },
-                        { id: 'fechaNacimiento', isValid: validateBirthDate() }
-                    ];
-                    
-                    const invalidField = fields.find(field => !field.isValid);
-                    if (invalidField) {
-                        const input = document.getElementById(invalidField.id);
-                        if (input) {
-                            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            input.focus();
-                        }
-                    } else if (!validateTerms()) {
-                        termsCheckbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        termsCheckbox.focus();
-                    }
+        // Validate password
+        function validatePassword() {
+            const input = document.getElementById('password');
+            
+            if (!input) return false;
+            
+            const password = input.value;
+            const strengthBar = document.getElementById('passwordStrengthBar');
+            
+            // Check requirements
+            const hasMinLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            
+            // Update requirement indicators
+            updateRequirement('reqLength', hasMinLength);
+            updateRequirement('reqUppercase', hasUppercase);
+            updateRequirement('reqNumber', hasNumber);
+            updateRequirement('reqSpecial', hasSpecial);
+            
+            // Calculate strength
+            let strength = 0;
+            if (hasMinLength) strength += 25;
+            if (hasUppercase) strength += 25;
+            if (hasNumber) strength += 25;
+            if (hasSpecial) strength += 25;
+            
+            // Update strength bar
+            if (strengthBar) {
+                strengthBar.style.width = strength + '%';
+                
+                // Update color based on strength
+                if (strength <= 25) {
+                    strengthBar.className = 'password-strength-bar password-strength-weak';
+                } else if (strength <= 50) {
+                    strengthBar.className = 'password-strength-bar password-strength-medium';
                 } else {
-                    // Cambiar botón a estado de carga
-                    const registerBtn = document.getElementById('registerBtn');
-                    if (registerBtn) {
-                        registerBtn.disabled = true;
-                        registerBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Procesando...';
-                        
-                        // Agregar animación de spin
-                        const style = document.createElement('style');
-                        style.textContent = `
-                            .spin {
-                                animation: spin 1s linear infinite;
-                            }
-                            @keyframes spin {
-                                from { transform: rotate(0deg); }
-                                to { transform: rotate(360deg); }
-                            }
-                        `;
-                        document.head.appendChild(style);
-                    }
+                    strengthBar.className = 'password-strength-bar password-strength-strong';
                 }
-            });
+            }
+            
+            // Validar si cumple todos los requisitos
+            const isValid = hasMinLength && hasUppercase && hasNumber && hasSpecial;
+            
+            // Cambiar color del borde según validación
+            if (!isValid && password.length > 0) {
+                input.style.borderColor = 'var(--danger-red)';
+            } else if (isValid) {
+                input.style.borderColor = '';
+            } else {
+                input.style.borderColor = 'var(--danger-red)';
+            }
+            
+            return isValid;
         }
-    });
-</script>
+        
+        // Update requirement indicator
+        function updateRequirement(elementId, isMet) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const icon = element.querySelector('i');
+            
+            if (isMet) {
+                element.classList.add('met');
+                element.classList.remove('unmet');
+                icon.className = 'bi bi-check-circle-fill';
+                icon.style.color = 'var(--success-green)';
+            } else {
+                element.classList.add('unmet');
+                element.classList.remove('met');
+                icon.className = 'bi bi-circle';
+                icon.style.color = '#6c757d';
+            }
+        }
+        
+        // Validate identification number
+        function validateIdentification() {
+            const input = document.getElementById('numeroIdentificacion');
+            const idError = document.getElementById('idError');
+            const idRegex = /^[A-Za-z0-9]+$/;
+            
+            if (!input) return false;
+            
+            const value = input.value.trim();
+            
+            if (!value) {
+                input.style.borderColor = 'var(--danger-red)';
+                if (idError) idError.style.display = 'flex';
+                return false;
+            }
+            
+            if (!idRegex.test(value)) {
+                input.style.borderColor = 'var(--danger-red)';
+                if (idError) idError.style.display = 'flex';
+                return false;
+            } else {
+                input.style.borderColor = '';
+                if (idError) idError.style.display = 'none';
+                return true;
+            }
+        }
+        
+        // Validate birth date
+        function validateBirthDate() {
+            const input = document.getElementById('fechaNacimiento');
+            const dateError = document.getElementById('dateError');
+            
+            if (!input) return false;
+            
+            const value = input.value;
+            
+            if (!value) {
+                input.style.borderColor = 'var(--danger-red)';
+                if (dateError) {
+                    dateError.style.display = 'flex';
+                    dateError.innerHTML = '<i class="bi bi-exclamation-circle"></i> La fecha de nacimiento es requerida';
+                }
+                return false;
+            }
+            
+            const birthDate = new Date(value);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            if (age < 18) {
+                input.style.borderColor = 'var(--danger-red)';
+                if (dateError) {
+                    dateError.style.display = 'flex';
+                    dateError.innerHTML = '<i class="bi bi-exclamation-circle"></i> Debes tener al menos 18 años para registrarte';
+                }
+                return false;
+            } else {
+                input.style.borderColor = '';
+                if (dateError) dateError.style.display = 'none';
+                return true;
+            }
+        }
+        
+        // Validate terms checkbox
+        function validateTerms() {
+            const termsCheckbox = document.getElementById('terms');
+            return termsCheckbox ? termsCheckbox.checked : false;
+        }
+        
+        // Validate entire form
+        function validateForm() {
+            // Validar todos los campos
+            const isFirstNameValid = validateName('firstName');
+            const isLastNameValid = validateName('lastName');
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            const isIdValid = validateIdentification();
+            const isDateValid = validateBirthDate();
+            const isTermsValid = validateTerms();
+            
+            // Verificar si todos son válidos
+            const allValid = isFirstNameValid && 
+                            isLastNameValid && 
+                            isEmailValid && 
+                            isPasswordValid && 
+                            isIdValid && 
+                            isDateValid && 
+                            isTermsValid;
+            
+            // Actualizar botón
+            const registerBtn = document.getElementById('registerBtn');
+            if (registerBtn) {
+                if (allValid) {
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = '<i class="bi bi-person-plus"></i> Crear Cuenta';
+                    registerBtn.style.opacity = '1';
+                    registerBtn.style.cursor = 'pointer';
+                } else {
+                    registerBtn.disabled = true;
+                    registerBtn.innerHTML = '<i class="bi bi-lock"></i> Completa todos los campos';
+                    registerBtn.style.opacity = '0.6';
+                    registerBtn.style.cursor = 'not-allowed';
+                }
+            }
+            
+            return allValid;
+        }
+        
+        // Initialize form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Formulario cargado, inicializando validación...');
+            
+            // Agregar event listeners a todos los campos
+            const inputs = document.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                input.addEventListener('input', validateForm);
+                input.addEventListener('change', validateForm);
+                input.addEventListener('blur', validateForm);
+            });
+            
+            // Agregar event listener al checkbox
+            const termsCheckbox = document.getElementById('terms');
+            if (termsCheckbox) {
+                termsCheckbox.addEventListener('change', validateForm);
+            }
+            
+            // Validación inicial
+            setTimeout(() => {
+                validateForm();
+            }, 100);
+            
+            // Manejar el envío del formulario
+            const form = document.getElementById('registrationForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (!validateForm()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Mostrar alerta
+                        alert('Por favor, completa todos los campos correctamente antes de enviar el formulario.');
+                        
+                        // Encontrar el primer campo inválido
+                        const fields = [
+                            { id: 'firstName', isValid: validateName('firstName') },
+                            { id: 'lastName', isValid: validateName('lastName') },
+                            { id: 'email', isValid: validateEmail() },
+                            { id: 'password', isValid: validatePassword() },
+                            { id: 'numeroIdentificacion', isValid: validateIdentification() },
+                            { id: 'fechaNacimiento', isValid: validateBirthDate() }
+                        ];
+                        
+                        const invalidField = fields.find(field => !field.isValid);
+                        if (invalidField) {
+                            const input = document.getElementById(invalidField.id);
+                            if (input) {
+                                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                input.focus();
+                            }
+                        } else if (!validateTerms()) {
+                            termsCheckbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            termsCheckbox.focus();
+                        }
+                    } else {
+                        // Cambiar botón a estado de carga
+                        const registerBtn = document.getElementById('registerBtn');
+                        if (registerBtn) {
+                            registerBtn.disabled = true;
+                            registerBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Procesando...';
+                            
+                            // Agregar animación de spin
+                            const style = document.createElement('style');
+                            style.textContent = `
+                                .spin {
+                                    animation: spin 1s linear infinite;
+                                }
+                                @keyframes spin {
+                                    from { transform: rotate(0deg); }
+                                    to { transform: rotate(360deg); }
+                                }
+                            `;
+                            document.head.appendChild(style);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
