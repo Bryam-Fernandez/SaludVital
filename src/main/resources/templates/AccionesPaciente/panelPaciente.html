@@ -3,1441 +3,900 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salud Vital - Panel de Paciente</title>
+    <title>Salud Vital - Portal del Paciente</title>
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Plus Jakarta Sans (Tipografía ultra-premium) -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FullCalendar -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet"/>
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --primary-blue: #0077cc;
-            --secondary-blue: #00bcd4;
-            --accent-blue: #0059ff;
-            --light-gray: #f8f9fa;
-            --dark-gray: #2c3e50;
-            --success-green: #28a745;
-            --warning-yellow: #ffc107;
-            --danger-red: #dc3545;
-            --purple: #6f42c1;
-            --teal: #20c997;
+            /* Paleta Paciente Premium (Tonos Salud y Confianza) */
+            --primary: #2563eb;       /* Azul Rey */
+            --primary-hover: #1d4ed8;
+            --secondary: #0ea5e9;     /* Celeste */
+            --surface: #ffffff;
+            --background: #f8fafc;    /* Gris muy claro */
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            
+            /* Semánticos */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --teal: #14b8a6;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
         
         body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f5f8fa;
-            color: #333;
-            line-height: 1.6;
+            background-color: var(--background);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
         }
-        
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-        }
-        
-        /* Patient Header */
-        .patient-header {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
-            color: white;
-            padding: 1.5rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .patient-info {
+
+        /* =========================================
+           TOP NAVIGATION BAR (GLASSMORPHISM)
+        ========================================= */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            z-index: 1000;
             display: flex;
+            align-items: center;
+            padding: 0 2rem;
             justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
-        
-        .patient-greeting h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-        
-        .patient-greeting p {
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-        
-        .patient-name {
-            color: #ffeb3b;
-            font-weight: 700;
-        }
-        
-        .patient-actions {
+
+        .brand-logo {
             display: flex;
+            align-items: center;
             gap: 10px;
-            align-items: center;
-        }
-        
-        .patient-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, white 0%, #e3f2fd 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-blue);
-            border: 3px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Main Container */
-        .patient-container {
-            padding: 2rem 0;
-            min-height: calc(100vh - 200px);
-        }
-        
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-        
-        @media (min-width: 992px) {
-            .dashboard-grid {
-                grid-template-columns: 300px 1fr;
-            }
-        }
-        
-        /* Sidebar */
-        .patient-sidebar {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            padding: 1.5rem;
-            height: fit-content;
-            position: sticky;
-            top: 2rem;
-        }
-        
-        .sidebar-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f1f3f4;
-        }
-        
-        .sidebar-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: white;
-            margin: 0 auto 1rem;
-            border: 4px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .sidebar-name {
             font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--dark-gray);
-        }
-        
-        .sidebar-id {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .menu-item {
-            margin-bottom: 8px;
-        }
-        
-        .menu-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            color: var(--dark-gray);
+            font-weight: 800;
+            color: var(--primary);
             text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.3s ease;
+            letter-spacing: -0.5px;
         }
-        
-        .menu-link:hover {
-            background-color: rgba(0, 119, 204, 0.1);
-            color: var(--primary-blue);
-            transform: translateX(5px);
-        }
-        
-        .menu-link.active {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
-            color: white;
-        }
-        
-        .menu-icon {
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
-        }
-        
-        .sidebar-stats {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid #f1f3f4;
-        }
-        
-        .stat-item {
+
+        .main-nav {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f1f3f4;
-        }
-        
-        .stat-item:last-child {
-            border-bottom: none;
-        }
-        
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
-        .stat-value {
-            font-weight: 600;
-            color: var(--dark-gray);
-        }
-        
-        /* Main Dashboard */
-        .dashboard-main {
-            display: flex;
-            flex-direction: column;
             gap: 2rem;
         }
-        
-        /* Welcome Card */
-        .welcome-card {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 119, 204, 0.2);
-        }
-        
-        .welcome-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .welcome-text {
-            opacity: 0.9;
-            margin-bottom: 1.5rem;
-        }
-        
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .quick-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
+
+        .nav-link-custom {
+            color: var(--text-muted);
             text-decoration: none;
-            display: inline-flex;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
         }
-        
-        .quick-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+
+        .nav-link-custom:hover, .nav-link-custom.active { color: var(--primary); }
+
+        .nav-profile {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 12px;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            color: white;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
         }
-        
-        .stat-icon.appointments {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+
+        /* =========================================
+           HERO SECTION (BANNER)
+        ========================================= */
+        .dashboard-content { margin-top: 70px; }
+
+        .hero-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            padding: 4.5rem 2rem 8rem 2rem; 
+            position: relative;
+            overflow: hidden;
         }
-        
-        .stat-icon.records {
-            background: linear-gradient(135deg, var(--success-green) 0%, #1b5e20 100%);
-        }
-        
-        .stat-icon.treatments {
-            background: linear-gradient(135deg, var(--purple) 0%, #6a1b9a 100%);
-        }
-        
-        .stat-icon.prescriptions {
-            background: linear-gradient(135deg, #e83e8c 0%, #c2185b 100%);
-        }
-        
-        .stat-info {
-            flex: 1;
-        }
-        
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--dark-gray);
-            line-height: 1;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
-        /* Calendar Section */
-        .calendar-section {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--dark-gray);
-            margin: 0;
-        }
-        
-        .section-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .action-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-            background: white;
-            color: var(--primary-blue);
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-        .action-btn:hover {
-            background-color: rgba(0, 119, 204, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .action-btn.primary {
-            background: var(--primary-blue);
-            color: white;
-            border-color: var(--primary-blue);
-        }
-        
-        .action-btn.primary:hover {
-            background: #0059b3;
-        }
-        
-        /* Calendar */
-        #calendar {
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            right: -5%;
+            top: -20%;
+            width: 400px;
             height: 400px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
         }
-        
-        .fc {
-            font-family: 'Open Sans', sans-serif;
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        
-        .fc .fc-toolbar-title {
-            font-family: 'Montserrat', sans-serif;
+
+        .hero-greeting h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-greeting p {
+            color: #94a3b8;
+            font-size: 1.15rem;
+            margin: 0;
+            max-width: 600px;
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
             font-weight: 600;
-        }
-        
-        .fc .fc-button-primary {
-            background-color: var(--primary-blue);
-            border-color: var(--primary-blue);
-        }
-        
-        .fc .fc-button-primary:hover {
-            background-color: #0059b3;
-            border-color: #0059b3;
-        }
-        
-        .fc-event {
-            border-radius: 6px;
-            border: none;
-            padding: 4px 8px;
-        }
-        
-        /* Appointments Table */
-        .appointments-table {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        .table-container {
-            overflow-x: auto;
-        }
-        
-        .appointments-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .appointments-table thead {
-            background-color: #f8f9fa;
-        }
-        
-        .appointments-table th {
-            padding: 1rem 1.5rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark-gray);
-            border-bottom: 2px solid #dee2e6;
-        }
-        
-        .appointments-table td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #f1f3f4;
-        }
-        
-        .appointments-table tbody tr:hover {
-            background-color: rgba(0, 119, 204, 0.05);
-        }
-        
-        .appointment-status {
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            transition: all 0.2s;
         }
         
-        .status-confirmed {
-            background-color: rgba(40, 167, 69, 0.15);
-            color: var(--success-green);
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
         }
-        
-        .status-pending {
-            background-color: rgba(255, 193, 7, 0.15);
-            color: var(--warning-yellow);
+
+        /* =========================================
+           ESTADÍSTICAS SUPERPUESTAS (OVERLAP)
+        ========================================= */
+        .stats-overlap {
+            max-width: 1400px;
+            margin: -4.5rem auto 3rem auto; 
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            position: relative;
+            z-index: 10;
         }
-        
-        .status-cancelled {
-            background-color: rgba(220, 53, 69, 0.15);
-            color: var(--danger-red);
-        }
-        
-        /* Recent Activity */
-        .activity-section {
-            background: white;
-            border-radius: 15px;
+
+        .stat-card-modern {
+            background: var(--surface);
+            border-radius: 20px;
             padding: 1.5rem;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        .activity-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .activity-item {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255,255,255,0.8);
             display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            padding: 15px;
-            border-bottom: 1px solid #f1f3f4;
-            transition: background-color 0.3s ease;
+            align-items: center;
+            gap: 1.25rem;
+            transition: transform 0.3s ease;
         }
-        
-        .activity-item:hover {
-            background-color: rgba(0, 119, 204, 0.05);
-        }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+
+        .stat-card-modern:hover { transform: translateY(-5px); }
+
+        .stat-icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            color: white;
+            font-size: 1.6rem;
             flex-shrink: 0;
         }
-        
-        .activity-icon.appointment {
-            background: var(--primary-blue);
+
+        .icon-blue { background: #eff6ff; color: #3b82f6; }
+        .icon-green { background: #ecfdf5; color: #10b981; }
+        .icon-purple { background: #faf5ff; color: #8b5cf6; }
+        .icon-orange { background: #fffbeb; color: #f59e0b; }
+
+        .stat-details h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0 0 2px 0;
+            line-height: 1;
         }
-        
-        .activity-icon.record {
-            background: var(--success-green);
-        }
-        
-        .activity-icon.prescription {
-            background: var(--purple);
-        }
-        
-        .activity-icon.reminder {
-            background: var(--warning-yellow);
-        }
-        
-        .activity-content {
-            flex: 1;
-        }
-        
-        .activity-text {
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-        
-        .activity-time {
+
+        .stat-details p {
+            margin: 0;
             font-size: 0.85rem;
-            color: #6c757d;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
-        /* Footer */
-        .patient-footer {
-            background-color: var(--dark-gray);
-            color: white;
-            padding: 2rem 0 1.5rem;
-            margin-top: 3rem;
+
+        /* =========================================
+           MAIN GRID (CUADRÍCULA PRINCIPAL)
+        ========================================= */
+        .main-dashboard-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
         }
-        
-        .footer-content {
+
+        .panel-card {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 1.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
-        
-        .footer-logo {
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
-        .footer-logo-icon {
-            font-size: 1.8rem;
-            color: var(--secondary-blue);
+
+        /* =========================================
+           TABLA MODERNA
+        ========================================= */
+        .table-responsive { overflow-x: auto; }
+        .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .modern-table th {
+            padding: 1rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
         }
-        
-        .footer-links {
-            display: flex;
-            gap: 1.5rem;
+        .modern-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
         }
-        
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: white;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 1.5rem;
-            margin-top: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .patient-info {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .patient-actions {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .section-actions {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .footer-links {
-                justify-content: center;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quick-actions {
-                flex-direction: column;
-            }
-            
-            .quick-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-        
-        /* Fade animations */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        
-        .fade-in-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Action buttons styles */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .btn-icon {
-            width: 36px;
-            height: 36px;
+        .modern-table tbody tr:last-child td { border-bottom: none; }
+        .modern-table tbody tr:hover { background: var(--background); }
+
+        .badge-status {
+            padding: 0.35rem 0.75rem;
             border-radius: 8px;
-            display: flex;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            border: 1px solid #dee2e6;
-            background-color: white;
-            transition: all 0.3s ease;
+            gap: 4px;
+        }
+        
+        .status-confirmada { background: #dcfce7; color: #166534; }
+        .status-programada { background: #eff6ff; color: #1e40af; }
+        .status-cancelada { background: #fee2e2; color: #991b1b; }
+        .status-completada { background: #f1f5f9; color: #475569; }
+        .status-pendiente { background: #fef3c7; color: #92400e; }
+
+        .action-buttons { display: flex; gap: 8px; }
+        .btn-icon {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border-color);
+            background: var(--surface);
+            color: var(--text-muted);
+            transition: all 0.2s;
             cursor: pointer;
         }
-        
-        .btn-icon:hover {
-            background-color: var(--primary-blue);
-            color: white;
-            border-color: var(--primary-blue);
+        .btn-icon:hover { background: var(--primary-light); color: var(--primary); border-color: #bfdbfe; }
+        .btn-icon.edit:hover { background: #fef3c7; color: #d97706; border-color: #fde68a; }
+        .btn-icon.delete:hover { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
+
+        /* =========================================
+           ACCIONES RÁPIDAS (COMMAND MENU STYLE)
+        ========================================= */
+        .command-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .cmd-btn {
+            background: var(--background);
+            border: 1px solid transparent;
+            padding: 1.25rem 1rem;
+            border-radius: 16px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .cmd-btn:hover {
+            background: var(--surface);
+            border-color: var(--primary);
+            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .cmd-icon { font-size: 1.8rem; margin-bottom: 0.5rem; display: block; }
+
+        /* =========================================
+           RESUMEN DE SALUD (INFO PILLS)
+        ========================================= */
+        .health-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
         
-        .btn-icon.edit:hover {
-            background-color: var(--warning-yellow);
-            border-color: var(--warning-yellow);
-            color: white;
+        .health-pill {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--background);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
         }
         
-        .btn-icon.delete:hover {
-            background-color: var(--danger-red);
-            border-color: var(--danger-red);
-            color: white;
+        .hp-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+        .hp-value { color: var(--text-dark); font-weight: 700; font-size: 0.95rem; }
+
+        /* =========================================
+           TIMELINE DE ACTIVIDAD
+        ========================================= */
+        .timeline-container { margin-top: 1rem; }
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: -20px;
+            width: 2px;
+            background: var(--border-color);
+        }
+        .timeline-icon {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.1rem; flex-shrink: 0; z-index: 2;
+        }
+        .bg-t-primary { background: var(--primary); }
+        .bg-t-success { background: var(--success); }
+        .bg-t-purple { background: var(--purple); }
+        .bg-t-warning { background: var(--warning); }
+        
+        .timeline-content { flex: 1; padding-top: 4px; }
+        .tl-text { font-weight: 600; font-size: 0.95rem; margin-bottom: 2px; color: var(--text-dark); }
+        .tl-time { color: var(--text-muted); font-size: 0.8rem; }
+
+        /* =========================================
+           FULLCALENDAR TWEAKS
+        ========================================= */
+        #calendar { height: 450px; }
+        .fc { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .fc .fc-toolbar-title { font-size: 1.25rem !important; font-weight: 800; color: var(--text-dark); }
+        .fc .fc-button-primary {
+            background-color: var(--background) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-dark) !important;
+            border-radius: 10px !important;
+            font-weight: 600; text-transform: capitalize; transition: all 0.2s;
+        }
+        .fc .fc-button-primary:hover, .fc .fc-button-primary.fc-button-active {
+            background-color: var(--primary) !important; color: white !important; border-color: var(--primary) !important;
+        }
+        .fc-theme-standard td, .fc-theme-standard th { border-color: var(--border-color); }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 992px) {
+            .main-dashboard-grid { grid-template-columns: 1fr; }
+            .hero-container { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .hero-section { padding: 4rem 1.5rem 6rem 1.5rem; }
+            .stats-overlap { padding: 0 1.5rem; margin-top: -3rem; }
+        }
+        @media (max-width: 768px) {
+            .main-nav { display: none; }
+            .command-menu { grid-template-columns: 1fr; }
+            .stats-overlap { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .stats-overlap { grid-template-columns: 1fr; margin-top: -2rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Patient Header -->
-    <header class="patient-header">
-        <div class="container">
-            <div class="patient-info">
-                <div class="patient-greeting">
-                    <!-- CORREGIDO: Manejo seguro de nulls en nombre y apellido -->
-                    <h1>Bienvenido, 
-                        <span class="patient-name">
-                            <span th:if="${paciente.nombre != null}">
-                                <span th:text="${paciente.nombre}">Beto</span>
-                            </span>
-                            <span th:if="${paciente.apellido != null}">
-                                <span th:text="' ' + ${paciente.apellido}"></span>
-                            </span>
-                            <span th:if="${paciente.nombre == null and paciente.apellido == null}">
-                                Usuario
-                            </span>
-                        </span>
-                    </h1>
-                    <p>Panel de control de paciente - Salud Vital</p>
+    
+    <!-- NAVEGACIÓN SUPERIOR -->
+    <nav class="top-navbar">
+        <a th:href="@{/pacientes/panel}" class="brand-logo">
+            <i class="bi bi-heart-pulse-fill fs-3"></i> SaludVital
+        </a>
+        
+        <div class="main-nav">
+            <a th:href="@{/pacientes/panel}" class="nav-link-custom active"><i class="bi bi-grid-fill"></i> Panel</a>
+            <a th:href="@{/citas/mis-citas}" class="nav-link-custom"><i class="bi bi-calendar-event-fill"></i> Mis Citas</a>
+            <a th:href="@{/expedientes/mi-expediente}" class="nav-link-custom"><i class="bi bi-journal-medical"></i> Mi Historial</a>
+        </div>
+        
+        <div class="nav-profile">
+            <a th:href="@{/paciente/notificaciones}" class="btn btn-light rounded-circle p-2 position-relative text-muted" style="background: var(--background);">
+                <i class="bi bi-bell-fill"></i>
+                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+            </a>
+            <div class="user-avatar" th:if="${paciente.nombre != null and paciente.apellido != null}"
+                 th:text="${#strings.substring(paciente.nombre, 0, 1) + #strings.substring(paciente.apellido, 0, 1)}">BP</div>
+            <div class="user-avatar" th:if="${paciente.nombre == null}">U</div>
+            
+            <div class="dropdown d-none d-sm-block">
+                <div class="fw-bold" style="font-size: 0.9rem;">
+                    <span th:if="${paciente.nombre != null}" th:text="${paciente.nombre}">Nombre</span>
+                    <span th:if="${paciente.apellido != null}" th:text="' ' + ${paciente.apellido}"></span>
                 </div>
-                
-                <div class="patient-actions">
-                    <div class="patient-avatar">
-                        <!-- CORREGIDO: Manejo seguro para iniciales -->
-                        <span th:if="${paciente.nombre != null and paciente.apellido != null}"
-                              th:text="${#strings.substring(paciente.nombre, 0, 1) + #strings.substring(paciente.apellido, 0, 1)}">
-                            BP
-                        </span>
-                        <span th:if="${paciente.nombre != null and paciente.apellido == null}"
-                              th:text="${#strings.substring(paciente.nombre, 0, 1)}">
-                            B
-                        </span>
-                        <span th:if="${paciente.nombre == null}">
-                            U
-                        </span>
-                    </div>
-                    <a th:href="@{/paciente/notificaciones}" class="action-btn">
-                        <i class="bi bi-bell"></i>
-                        Notificaciones
-                    </a>
-                    <a th:href="@{/citas/nueva}" class="action-btn primary">
-                        <i class="bi bi-calendar-plus"></i>
-                        Nueva Cita
+                <div class="text-muted" style="font-size: 0.75rem;" th:text="'ID: P-' + ${paciente.id}">ID: P-00</div>
+            </div>
+            
+            <a th:href="@{/logout}" class="btn btn-light btn-sm ms-2 rounded-3 border text-danger" title="Cerrar sesión">
+                <i class="bi bi-box-arrow-right"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="dashboard-content">
+        
+        <!-- HERO BANNER -->
+        <section class="hero-section">
+            <div class="hero-container">
+                <div class="hero-greeting">
+                    <h1>Hola, <span th:if="${paciente.nombre != null}" th:text="${paciente.nombre}">Beto</span>!</h1>
+                    <p>Tu salud está en buenas manos. Gestiona tus citas, recetas y da seguimiento a tu bienestar clínico.</p>
+                </div>
+                <div>
+                    <a th:href="@{/citas/nueva}" class="btn-glass">
+                        <i class="bi bi-calendar-plus-fill text-info"></i> Agendar Nueva Cita
                     </a>
                 </div>
             </div>
-        </div>
-    </header>
+        </section>
 
-    <!-- Main Content -->
-    <main class="patient-container">
-        <div class="container">
-            <div class="dashboard-grid">
-                <!-- Sidebar -->
-                <aside class="patient-sidebar fade-in-up">
-                    <div class="sidebar-header">
-                        <div class="sidebar-avatar">
-                            <!-- CORREGIDO: Manejo seguro para iniciales -->
-                            <span th:if="${paciente.nombre != null and paciente.apellido != null}"
-                                  th:text="${#strings.substring(paciente.nombre, 0, 1) + #strings.substring(paciente.apellido, 0, 1)}">
-                                BP
-                            </span>
-                            <span th:if="${paciente.nombre != null and paciente.apellido == null}"
-                                  th:text="${#strings.substring(paciente.nombre, 0, 1)}">
-                                B
-                            </span>
-                            <span th:if="${paciente.nombre == null}">
-                                U
-                            </span>
-                        </div>
-                        <!-- CORREGIDO: Manejo seguro de nombre completo -->
-                        <h3 class="sidebar-name">
-                            <span th:if="${paciente.nombre != null}">
-                                <span th:text="${paciente.nombre}">Beto</span>
-                            </span>
-                            <span th:if="${paciente.apellido != null}">
-                                <span th:text="' ' + ${paciente.apellido}"></span>
-                            </span>
-                            <span th:if="${paciente.nombre == null}">
-                                Usuario
-                            </span>
-                        </h3>
-                        <div class="sidebar-id" th:text="'ID: P-' + ${paciente.id}">ID: P-14</div>
-                    </div>
-                    
-                    <ul class="sidebar-menu">
-                        <li class="menu-item">
-                            <a th:href="@{/pacientes/panel}" class="menu-link active">
-                                <i class="bi bi-house menu-icon"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a th:href="@{/citas/mis-citas}" class="menu-link">
-                                <i class="bi bi-calendar-check menu-icon"></i>
-                                Mis Citas
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a th:href="@{/citas/nueva}" class="menu-link">
-                                <i class="bi bi-plus-circle menu-icon"></i>
-                                Crear Cita
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a th:href="@{/expedientes/mi-expediente}" class="menu-link">
-                                <i class="bi bi-file-medical menu-icon"></i>
-                                Historial Clínico
-                            </a>
-                        </li>
-                       <li class="menu-item">
-    <a th:href="@{/tratamientos/paciente/mis-tratamientos}" class="menu-link">
-        <i class="bi bi-prescription2 menu-icon"></i>
-        Tratamientos
-    </a>
-</li>
-
-<li class="menu-item">
-    <a th:href="@{/recetas/paciente/mis-recetas}" class="menu-link">
-        <i class="bi bi-file-earmark-text menu-icon"></i>
-        Recetas <!-- ← Usa ruta diferente -->
-    </a>
-</li>
-                        <li class="menu-item">
-                            <a th:href="@{/paciente/facturacion}" class="menu-link">
-                                <i class="bi bi-credit-card menu-icon"></i>
-                                Facturación
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a th:href="@{/paciente/configuracion}" class="menu-link">
-                                <i class="bi bi-gear menu-icon"></i>
-                                Configuración
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a th:href="@{/logout}" class="menu-link">
-                                <i class="bi bi-box-arrow-right menu-icon"></i>
-                                Cerrar Sesión
-                            </a>
-                        </li>
-                    </ul>
-                    
-                    <div class="sidebar-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Edad</span>
-                            <!-- CORREGIDO: Manejo de edad (probablemente no tienes este campo) -->
-                            <span class="stat-value">35 años</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Tipo de Sangre</span>
-                            <!-- CORREGIDO: Usar el atributo correcto del modelo -->
-                            <span class="stat-value" th:text="${tipoSangre != null ? tipoSangre : 'No especificado'}">No especificado</span>
-                        </div>           
-                        <div class="stat-item">
-                            <span class="stat-label">Última Visita</span>
-                            <!-- CORREGIDO: Usar #temporals en lugar de #dates para LocalDateTime -->
-                            <span class="stat-value" th:if="${ultimaCita != null}">
-                                <span th:text="${#temporals.format(ultimaCita.fechaHora, 'dd/MM/yyyy')}">Sin fecha</span>
-                            </span>
-                            <span class="stat-value" th:if="${ultimaCita == null}">
-                                Sin visitas
-                            </span>
-                        </div>
-                    </div>
-                </aside>
-                
-                <!-- Main Dashboard -->
-                <div class="dashboard-main">
-                    <!-- Welcome Card -->
-                    <div class="welcome-card fade-in-up">
-                        <h2 class="welcome-title">¡Bienvenido a tu panel de control!</h2>
-                        <p class="welcome-text">
-                            Aquí puedes gestionar todas tus citas médicas, acceder a tu historial clínico 
-                            y mantener un seguimiento de tu salud. Tu bienestar es nuestra prioridad.
-                        </p>
-                        <div class="quick-actions">
-                            <a th:href="@{/citas/nueva}" class="quick-btn">
-                                <i class="bi bi-calendar-plus"></i>
-                                Nueva Cita
-                            </a>
-                            <a th:href="@{/expedientes/mi-expediente}" class="quick-btn">
-                                <i class="bi bi-file-medical"></i>
-                                Ver Historial
-                            </a>
-                           <a th:href="@{/tratamientos/paciente/mis-tratamientos}" class="quick-btn">
-    <i class="bi bi-prescription"></i>
-    Mis Recetas
-</a>
-                            <a href="#" class="quick-btn">
-                                <i class="bi bi-download"></i>
-                                Descargar Informes
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Stats Cards -->
-                    <div class="stats-grid">
-                        <div class="stat-card fade-in-up">
-                            <div class="stat-icon appointments">
-                                <i class="bi bi-calendar-check"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value" id="citasPendientesCounter" th:text="${citasPendientes != null ? citasPendientes : 0}">0</div>
-                                <div class="stat-label">Citas Activas</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card fade-in-up">
-                            <div class="stat-icon records">
-                                <i class="bi bi-file-medical"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value" th:text="${totalExpedientes != null ? totalExpedientes : 0}">1</div>
-                                <div class="stat-label">Historial Total</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card fade-in-up">
-                            <div class="stat-icon treatments">
-                                <i class="bi bi-prescription2"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value" th:text="${tratamientosActivos != null ? tratamientosActivos : 3}">3</div>
-                                <div class="stat-label">Tratamientos</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card fade-in-up">
-                            <div class="stat-icon prescriptions">
-                                <i class="bi bi-capsule"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value" th:text="${recetasActivas != null ? recetasActivas : 2}">2</div>
-                                <div class="stat-label">Recetas Activas</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Calendar & Activity -->
-                    <div class="row g-3">
-                        <div class="col-lg-8">
-                            <div class="calendar-section fade-in-up">
-                                <div class="section-header">
-                                    <h3 class="section-title">Calendario de Citas</h3>
-                                    <div class="section-actions">
-                                        <button class="action-btn" onclick="if (window.calendar) window.calendar.prev()">
-                                            <i class="bi bi-chevron-left"></i>
-                                            Anterior
-                                        </button>
-                                        <button class="action-btn" onclick="if (window.calendar) window.calendar.next()">
-                                            Siguiente
-                                            <i class="bi bi-chevron-right"></i>
-                                        </button>
-                                        <button class="action-btn primary" onclick="if (window.calendar) window.calendar.today()">
-                                            <i class="bi bi-calendar-day"></i>
-                                            Hoy
-                                        </button>
-                                    </div>
-                                </div>
-                                <div id="calendar"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-lg-4">
-                            <div class="activity-section fade-in-up">
-                                <h3 class="section-title mb-3">Actividad Reciente</h3>
-                                <ul class="activity-list">
-                                    <li class="activity-item">
-                                        <div class="activity-icon appointment">
-                                            <i class="bi bi-calendar-check"></i>
-                                        </div>
-                                        <div class="activity-content">
-                                            <div class="activity-text">Cita confirmada con el Dr. Pérez</div>
-                                            <div class="activity-time">Hace 2 horas</div>
-                                        </div>
-                                    </li>
-                                    <li class="activity-item">
-                                        <div class="activity-icon record">
-                                            <i class="bi bi-file-medical"></i>
-                                        </div>
-                                        <div class="activity-content">
-                                            <div class="activity-text">Nueva entrada en historial clínico</div>
-                                            <div class="activity-time">Ayer, 14:30</div>
-                                        </div>
-                                    </li>
-                                    <li class="activity-item">
-                                        <div class="activity-icon prescription">
-                                            <i class="bi bi-prescription"></i>
-                                        </div>
-                                        <div class="activity-content">
-                                            <div class="activity-text">Tratamiento actualizado</div>
-                                            <div class="activity-time">Ayer, 10:15</div>
-                                        </div>
-                                    </li>
-                                    <li class="activity-item">
-                                        <div class="activity-icon reminder">
-                                            <i class="bi bi-bell"></i>
-                                        </div>
-                                        <div class="activity-content">
-                                            <div class="activity-text">Recordatorio de cita mañana</div>
-                                            <div class="activity-time">Hoy, 09:00</div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Appointments Table -->
-                    <div class="appointments-table fade-in-up">
-                        <div class="section-header">
-                            <h3 class="section-title">Próximas Citas</h3>
-                            <div class="section-actions">
-                               <a th:href="@{/citas/mis-citas}" class="action-btn">
-    <i class="bi bi-eye"></i>
-    Ver Todas
-</a>
-                                <a th:href="@{/citas/nueva}" class="action-btn primary">
-                                    <i class="bi bi-plus-circle"></i>
-                                    Nueva Cita
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Fecha y Hora</th>
-                                        <th>Especialidad</th>
-                                        <th>Médico</th>
-                                        <th>Ubicación</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:if="${proximasCitas == null or proximasCitas.isEmpty()}">
-                                        <td colspan="6" class="text-center">
-                                            <div class="text-muted py-4">
-                                                <i class="bi bi-calendar-x" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                                                <p>No tienes citas programadas</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr th:each="cita : ${proximasCitas}" th:if="${proximasCitas != null and !proximasCitas.isEmpty()}">
-                                        <td>
-                                            <!-- CORREGIDO: Usar #temporals para LocalDateTime -->
-                                            <strong th:text="${#temporals.format(cita.fechaHora, 'dd/MM/yyyy')}">01/09/2025</strong>
-                                            <div class="text-muted" th:text="${#temporals.format(cita.fechaHora, 'HH:mm')}">10:30 AM</div>
-                                        </td>
-                                        <td>
-                                            <span th:switch="${cita.medico?.especialidad}">
-                                                <span th:case="MEDICINA_GENERAL">Medicina General</span>
-                                                <span th:case="CARDIOLOGIA">Cardiología</span>
-                                                <span th:case="PEDIATRIA">Pediatría</span>
-                                                <span th:case="DERMATOLOGIA">Dermatología</span>
-                                                <span th:case="NEUROLOGIA">Neurología</span>
-                                                <span th:case="ORTOPEDIA">Ortopedia</span>
-                                                <span th:case="GINECOLOGIA">Ginecología</span>
-                                                <span th:case="PSIQUIATRIA">Psiquiatría</span>
-                                                <span th:case="OFTALMOLOGIA">Oftalmología</span>
-                                                <span th:case="ODONTOLOGIA">Odontología</span>
-                                                <span th:case="*">Consulta General</span>
-                                            </span>
-                                        </td>
-                                        <!-- CORREGIDO: Manejo seguro de médico -->
-                                        <td th:if="${cita.medico != null}" th:text="${cita.medico.nombre + ' ' + cita.medico.apellido}">Dr. Ramírez</td>
-                                        <td th:if="${cita.medico == null}">Médico no asignado</td>
-                                        <td>Consultorio</td>
-                                        <td>
-                                            <span th:switch="${cita.estado}" class="appointment-status">
-                                                <span th:case="CONFIRMADA" class="status-confirmed">
-                                                    <i class="bi bi-check-circle"></i>
-                                                    Confirmada
-                                                </span>
-                                                <span th:case="PROGRAMADA" class="status-pending">
-                                                    <i class="bi bi-clock"></i>
-                                                    Programada
-                                                </span>
-                                                <span th:case="CANCELADA" class="status-cancelled">
-                                                    <i class="bi bi-x-circle"></i>
-                                                    Cancelada
-                                                </span>
-                                                <span th:case="COMPLETADA" class="status-confirmed">
-                                                    <i class="bi bi-check-circle"></i>
-                                                    Completada
-                                                </span>
-                                                <span th:case="*" class="status-pending">
-                                                    <i class="bi bi-question-circle"></i>
-                                                    Pendiente
-                                                </span>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn-icon" th:onclick="'verDetalleCita(' + ${cita.id} + ')'" title="Ver detalles">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                                <button class="btn-icon edit" th:onclick="'editarCita(' + ${cita.id} + ')'" title="Modificar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn-icon delete" th:onclick="'cancelarCita(' + ${cita.id} + ')'" title="Cancelar">
-                                                    <i class="bi bi-x-circle"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="patient-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <i class="bi bi-heart-pulse footer-logo-icon"></i>
-                    <div>
-                        <h4 class="mb-0">Salud Vital</h4>
-                        <small>Panel de Paciente</small>
-                    </div>
-                </div>
-                
-                <div class="footer-links">
-                    <a href="#">Ayuda</a>
-                    <a href="#">Contacto</a>
-                    <a href="#">Privacidad</a>
-                    <a href="#">Términos</a>
+        <!-- TARJETAS DE ESTADÍSTICAS SUPERPUESTAS -->
+        <div class="stats-overlap">
+            <div class="stat-card-modern">
+                <div class="stat-icon-wrapper icon-blue"><i class="bi bi-calendar-check-fill"></i></div>
+                <div class="stat-details">
+                    <h3 id="citasPendientesCounter" th:text="${citasPendientes != null ? citasPendientes : 0}">0</h3>
+                    <p>Citas Activas</p>
                 </div>
             </div>
             
-            <div class="copyright">
-                <p>© 2025 Centro de Salud Vital. Tu salud es nuestra prioridad.</p>
+            <div class="stat-card-modern">
+                <div class="stat-icon-wrapper icon-green"><i class="bi bi-clipboard2-pulse-fill"></i></div>
+                <div class="stat-details">
+                    <h3 class="stat-counter" th:text="${totalExpedientes != null ? totalExpedientes : 0}">0</h3>
+                    <p>Historial Total</p>
+                </div>
+            </div>
+            
+            <div class="stat-card-modern">
+                <div class="stat-icon-wrapper icon-purple"><i class="bi bi-bandaid-fill"></i></div>
+                <div class="stat-details">
+                    <h3 class="stat-counter" th:text="${tratamientosActivos != null ? tratamientosActivos : 0}">0</h3>
+                    <p>Tratamientos</p>
+                </div>
+            </div>
+            
+            <div class="stat-card-modern">
+                <div class="stat-icon-wrapper icon-orange"><i class="bi bi-capsule"></i></div>
+                <div class="stat-details">
+                    <h3 class="stat-counter" th:text="${recetasActivas != null ? recetasActivas : 0}">0</h3>
+                    <p>Recetas Activas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID PRINCIPAL -->
+        <div class="main-dashboard-grid">
+            
+            <!-- COLUMNA IZQUIERDA (Ancha) -->
+            <div class="left-col">
+                
+                <!-- Próximas Citas (Tabla Moderna) -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="bi bi-list-check text-primary"></i> Próximas Citas</h2>
+                        <a th:href="@{/citas/mis-citas}" class="btn btn-sm btn-outline-secondary rounded-pill fw-bold">Ver Todas</a>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha y Hora</th>
+                                    <th>Especialidad</th>
+                                    <th>Médico</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${proximasCitas == null or proximasCitas.isEmpty()}">
+                                    <td colspan="5" class="text-center py-5">
+                                        <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                                        <p class="mt-2 text-muted fw-medium">No tienes citas programadas actualmente.</p>
+                                        <a th:href="@{/citas/nueva}" class="btn btn-primary rounded-pill mt-2">Agendar una cita</a>
+                                    </td>
+                                </tr>
+                                <tr th:each="cita : ${proximasCitas}" th:if="${proximasCitas != null and !proximasCitas.isEmpty()}">
+                                    <td>
+                                        <div class="fw-bold text-dark" th:text="${#temporals.format(cita.fechaHora, 'dd MMM, yyyy')}">01 Sep, 2025</div>
+                                        <div class="text-muted small"><i class="bi bi-clock"></i> <span th:text="${#temporals.format(cita.fechaHora, 'HH:mm')}">10:30</span> hrs</div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium text-dark" th:switch="${cita.medico?.especialidad}">
+                                            <span th:case="MEDICINA_GENERAL">Medicina General</span>
+                                            <span th:case="CARDIOLOGIA">Cardiología</span>
+                                            <span th:case="PEDIATRIA">Pediatría</span>
+                                            <span th:case="DERMATOLOGIA">Dermatología</span>
+                                            <span th:case="NEUROLOGIA">Neurología</span>
+                                            <span th:case="*">Consulta General</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-medium" th:if="${cita.medico != null}" th:text="'Dr. ' + ${cita.medico.nombre + ' ' + cita.medico.apellido}">Dr. Ramírez</div>
+                                        <div class="text-muted small" th:if="${cita.medico == null}">No asignado</div>
+                                    </td>
+                                    <td>
+                                        <span th:switch="${cita.estado}" class="badge-status">
+                                            <span th:case="CONFIRMADA" class="status-confirmada"><i class="bi bi-check-circle-fill"></i> Confirmada</span>
+                                            <span th:case="PROGRAMADA" class="status-programada"><i class="bi bi-clock-fill"></i> Programada</span>
+                                            <span th:case="CANCELADA" class="status-cancelada"><i class="bi bi-x-circle-fill"></i> Cancelada</span>
+                                            <span th:case="COMPLETADA" class="status-completada"><i class="bi bi-check-circle-fill"></i> Completada</span>
+                                            <span th:case="*" class="status-pendiente"><i class="bi bi-hourglass-split"></i> Pendiente</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-icon" th:onclick="'verDetalleCita(' + ${cita.id} + ')'" title="Ver detalles"><i class="bi bi-eye"></i></button>
+                                            <button class="btn-icon edit" th:onclick="'editarCita(' + ${cita.id} + ')'" title="Modificar"><i class="bi bi-pencil"></i></button>
+                                            <button class="btn-icon delete" th:onclick="'cancelarCita(' + ${cita.id} + ')'" title="Cancelar"><i class="bi bi-x-lg"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Calendario -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="bi bi-calendar3 text-primary"></i> Mi Calendario</h2>
+                    </div>
+                    <div id="calendar"></div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA (Estrecha) -->
+            <div class="right-col">
+                
+                <!-- Resumen de Salud (Info Pills) -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="bi bi-person-vcard text-primary"></i> Mi Perfil Médico</h2>
+                    </div>
+                    <div class="health-summary">
+                        <div class="health-pill">
+                            <span class="hp-label"><i class="bi bi-droplet-fill text-danger me-1"></i> Tipo de Sangre</span>
+                            <span class="hp-value" th:text="${tipoSangre != null ? tipoSangre : 'No registrado'}">O+</span>
+                        </div>
+                        <div class="health-pill">
+                            <span class="hp-label"><i class="bi bi-calendar-event me-1"></i> Edad</span>
+                            <span class="hp-value">35 años</span> <!-- Este valor es estático en tu código original -->
+                        </div>
+                        <div class="health-pill">
+                            <span class="hp-label"><i class="bi bi-clock-history me-1"></i> Última Visita</span>
+                            <span class="hp-value" th:if="${ultimaCita != null}" th:text="${#temporals.format(ultimaCita.fechaHora, 'dd/MM/yyyy')}">--/--/----</span>
+                            <span class="hp-value text-muted" th:if="${ultimaCita == null}">Sin visitas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Command Menu (Acciones Rápidas) -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="bi bi-lightning-charge-fill text-warning"></i> Centro de Mando</h2>
+                    </div>
+                    <div class="command-menu">
+                        <a th:href="@{/tratamientos/paciente/mis-tratamientos}" class="cmd-btn">
+                            <i class="bi bi-bandaid cmd-icon text-purple"></i> Tratamientos
+                        </a>
+                        <a th:href="@{/recetas/paciente/mis-recetas}" class="cmd-btn">
+                            <i class="bi bi-file-earmark-medical cmd-icon text-success"></i> Recetas
+                        </a>
+                        <a th:href="@{/paciente/facturacion}" class="cmd-btn">
+                            <i class="bi bi-credit-card cmd-icon text-primary"></i> Pagos
+                        </a>
+                        <a th:href="@{/paciente/configuracion}" class="cmd-btn">
+                            <i class="bi bi-gear cmd-icon text-secondary"></i> Ajustes
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Actividad Reciente -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="bi bi-activity text-primary"></i> Actividad Reciente</h2>
+                    </div>
+                    
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <div class="timeline-icon bg-t-primary"><i class="bi bi-calendar-check"></i></div>
+                            <div class="timeline-content">
+                                <div class="tl-text">Cita confirmada (Dr. Pérez)</div>
+                                <div class="tl-time">Hace 2 horas</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon bg-t-success"><i class="bi bi-file-earmark-medical"></i></div>
+                            <div class="timeline-content">
+                                <div class="tl-text">Historial actualizado</div>
+                                <div class="tl-time">Ayer, 14:30</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon bg-t-purple"><i class="bi bi-capsule"></i></div>
+                            <div class="timeline-content">
+                                <div class="tl-text">Nueva receta disponible</div>
+                                <div class="tl-time">Ayer, 10:15</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon bg-t-warning"><i class="bi bi-bell"></i></div>
+                            <div class="timeline-content">
+                                <div class="tl-text">Recordatorio de cita mañana</div>
+                                <div class="tl-time">Hace 2 días</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-white border-top py-4 mt-5">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center text-muted" style="font-size: 0.9rem;">
+            <div>© 2025 Salud Vital. Tu salud, nuestra prioridad.</div>
+            <div class="d-flex gap-4 mt-3 mt-md-0">
+                <a href="#" class="text-muted text-decoration-none">Ayuda</a>
+                <a href="#" class="text-muted text-decoration-none">Privacidad</a>
+                <a href="#" class="text-muted text-decoration-none">Términos</a>
             </div>
         </div>
     </footer>
     
-   <!-- Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- FullCalendar con carga condicional -->
-<script>
-    // Variable global para verificar carga
-    window.FullCalendarLoaded = false;
-    
-    // Función para cargar FullCalendar
-    function loadFullCalendar() {
-        return new Promise((resolve) => {
-            // Si ya está cargado, resolver
-            if (typeof FullCalendar !== 'undefined' && window.FullCalendarLoaded) {
-                console.log('FullCalendar ya está cargado');
-                resolve(true);
+    <!-- FullCalendar con carga asíncrona -->
+    <script>
+        window.FullCalendarLoaded = false;
+        function loadFullCalendar() {
+            return new Promise((resolve) => {
+                if (typeof FullCalendar !== 'undefined' && window.FullCalendarLoaded) { resolve(true); return; }
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js';
+                script.async = true;
+                script.onload = function() {
+                    window.FullCalendarLoaded = true;
+                    const localeScript = document.createElement('script');
+                    localeScript.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/es.global.min.js';
+                    localeScript.async = true;
+                    localeScript.onload = () => resolve(true);
+                    localeScript.onerror = () => resolve(true);
+                    document.head.appendChild(localeScript);
+                };
+                script.onerror = () => resolve(false);
+                document.head.insertBefore(script, document.head.firstChild);
+            });
+        }
+    </script>
+
+    <!-- Lógica Principal y Manejo de Acciones -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.addEventListener('load', async function() {
+            
+            // 1. Cargar FullCalendar
+            const calendarLoaded = await loadFullCalendar();
+            
+            if (!calendarLoaded) {
+                const calendarEl = document.getElementById('calendar');
+                if (calendarEl) calendarEl.innerHTML = `<div class="alert alert-warning">No se pudo cargar el calendario. Recarga la página.</div>`;
                 return;
             }
             
-            // Crear script para FullCalendar
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js';
-            script.async = true;
-            
-            script.onload = function() {
-                console.log('FullCalendar core cargado');
-                window.FullCalendarLoaded = true;
-                
-                // Cargar locale español
-                const localeScript = document.createElement('script');
-                localeScript.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/es.global.min.js';
-                localeScript.async = true;
-                
-                localeScript.onload = function() {
-                    console.log('Locale español cargado');
-                    resolve(true);
-                };
-                
-                localeScript.onerror = function() {
-                    console.warn('No se pudo cargar locale, usando inglés');
-                    resolve(true); // Resolver igual
-                };
-                
-                document.head.appendChild(localeScript);
-            };
-            
-            script.onerror = function() {
-                console.error('Error cargando FullCalendar');
-                resolve(false); // Resolver con false para indicar error
-            };
-            
-            // Insertar antes de otros scripts
-            document.head.insertBefore(script, document.head.firstChild);
-        });
-    }
-</script>
-
-<!-- Tu script principal -->
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    
-    // Esperar a que todo esté completamente cargado
-    window.addEventListener('load', async function() {
-        console.log('Página completamente cargada, inicializando...');
-        
-        // 1. Animar elementos
-        const fadeElements = document.querySelectorAll('.fade-in-up');
-        fadeElements.forEach((el, index) => {
-            setTimeout(() => {
-                el.classList.add('visible');
-            }, index * 100);
-        });
-        
-        // 2. Cargar FullCalendar
-        const calendarLoaded = await loadFullCalendar();
-        
-        if (!calendarLoaded) {
-            console.error('No se pudo cargar FullCalendar');
+            // 2. Inicializar calendario
             const calendarEl = document.getElementById('calendar');
-            if (calendarEl) {
-                calendarEl.innerHTML = `
-                    <div class="alert alert-warning">
-                        <h5>Calendario no disponible</h5>
-                        <p>No se pudo cargar el calendario. Por favor, recarga la página.</p>
-                        <button onclick="window.location.reload()" class="btn btn-primary btn-sm">
-                            Recargar página
-                        </button>
-                    </div>
-                `;
-            }
-            return;
-        }
-        
-        // 3. Inicializar calendario si FullCalendar está disponible
-        const calendarEl = document.getElementById('calendar');
-        if (calendarEl && typeof FullCalendar !== 'undefined') {
-            console.log('Inicializando calendario...');
-            
-            // Obtener eventos desde Thymeleaf
-            const eventosCalendario = /*[[${eventosCalendario}]]*/ [];
-            console.log('Eventos para calendario:', eventosCalendario);
-            
-            try {
-                // Crear instancia del calendario
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    locale: 'es',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                    },
-                    height: 400,
-                    events: eventosCalendario || [],
-                    eventClick: function(info) {
-                        const evento = info.event;
-                        const props = evento.extendedProps || {};
-                        
-                        let mensaje = `Cita: ${evento.title || 'Sin título'}\n`;
-                        
-                        if (evento.start) {
-                            mensaje += `Fecha: ${evento.start.toLocaleDateString('es-ES', { 
-                                weekday: 'long', 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric'
-                            })}\n`;
-                            mensaje += `Hora: ${evento.start.toLocaleTimeString('es-ES', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}\n`;
-                        }
-                        
-                        mensaje += `Médico: ${props.medico || 'No especificado'}\n`;
-                        mensaje += `Especialidad: ${props.especialidad || 'No especificada'}\n`;
-                        mensaje += `Estado: ${props.estado || 'No especificado'}`;
-                        
-                        alert(mensaje);
-                    },
-                    loading: function(isLoading) {
-                        if (isLoading) {
-                            calendarEl.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2">Cargando calendario...</p></div>';
-                        }
-                    }
-                });
+            if (calendarEl && typeof FullCalendar !== 'undefined') {
+                const eventosCalendario = /*[[${eventosCalendario}]]*/[];
                 
-                // Renderizar calendario
-                calendar.render();
-                console.log('Calendario renderizado exitosamente');
-                
-                // Hacer funciones globales para botones
-                window.calendar = {
-                    prev: () => calendar.prev(),
-                    next: () => calendar.next(),
-                    today: () => calendar.today()
-                };
-                
-            } catch (error) {
-                console.error('Error creando calendario:', error);
-                calendarEl.innerHTML = `
-                    <div class="alert alert-danger">
-                        <h5>Error en el calendario</h5>
-                        <p>${error.message}</p>
-                    </div>
-                `;
-            }
-        } else {
-            console.warn('No se encontró elemento calendario o FullCalendar no está definido');
-        }
-        
-        // 4. Contador animado para citas pendientes
-        const citasPendientesElement = document.getElementById('citasPendientesCounter');
-        if (citasPendientesElement) {
-            const citasPendientes = parseInt(citasPendientesElement.textContent) || 0;
-            if (citasPendientes > 0) {
-                animateCounter('citasPendientesCounter', citasPendientes);
-            }
-        }
-        
-        // 5. Agregar estilos para botones de acciones
-        if (!document.querySelector('#action-buttons-style')) {
-            const style = document.createElement('style');
-            style.id = 'action-buttons-style';
-            style.textContent = `
-                .action-buttons {
-                    display: flex;
-                    gap: 8px;
-                }
-                
-                .btn-icon {
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 8px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border: 1px solid #dee2e6;
-                    background-color: white;
-                    transition: all 0.3s ease;
-                    cursor: pointer;
-                }
-                
-                .btn-icon:hover {
-                    background-color: var(--primary-blue);
-                    color: white;
-                    border-color: var(--primary-blue);
-                }
-                
-                .btn-icon.edit:hover {
-                    background-color: var(--warning-yellow);
-                    border-color: var(--warning-yellow);
-                    color: white;
-                }
-                
-                .btn-icon.delete:hover {
-                    background-color: var(--danger-red);
-                    border-color: var(--danger-red);
-                    color: white;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    });
-    
-    // Función para animar contador
-    function animateCounter(elementId, target) {
-        const element = document.getElementById(elementId);
-        if (!element) return;
-        
-        let current = 0;
-        const increment = target / 30;
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                element.textContent = target;
-                clearInterval(timer);
-            } else {
-                element.textContent = Math.floor(current);
-            }
-        }, 30);
-    }
-    
-    // Funciones para manejo de citas
-    function verDetalleCita(citaId) {
-        window.location.href = '/citas/' + citaId;
-    }
+                try {
+                    const calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        locale: 'es',
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek'
+                        },
+                        height: 450,
+                        events: eventosCalendario ||[],
+                        eventClick: function(info) {
+                            const evento = info.event;
+                            const props = evento.extendedProps || {};
+                            const medico = props.medico || 'No especificado';
+                            const estado = props.estado || 'PROGRAMADA';
+                            
+                            let htmlContent = `
+                                <div class="text-start" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                            `;
+                            
+                            if (evento.start) {
+                                htmlContent += `
+                                    <p class="mb-2 fw-medium text-dark"><i class="bi bi-calendar-event me-2 text-primary"></i> ${evento.start.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                    <p class="mb-2 fw-medium text-dark"><i class="bi bi-clock me-2 text-primary"></i> ${evento.start.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}</p>
+                                `;
+                            }
+                            
+                            htmlContent += `
+                                    <p class="mb-2"><i class="bi bi-person-badge me-2 text-primary"></i> Dr. ${medico}</p>
+                                    <p class="mb-0 mt-3"><span class="badge bg-${estado==='CONFIRMADA'?'success':estado==='CANCELADA'?'danger':'primary'}">${estado}</span></p>
+                                </div>
+                            `;
 
-    function editarCita(citaId) {
-        window.location.href = '/citas/editar/' + citaId;
-    }
-
-    function cancelarCita(citaId) {
-        if (confirm('¿Estás seguro de que deseas cancelar esta cita?')) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/citas/cancelar/' + citaId;
-            form.style.display = 'none';
-            
-            // Agregar CSRF token si existe
-            const csrfInput = document.querySelector('input[name="_csrf"]');
-            if (csrfInput) {
-                const csrfClone = csrfInput.cloneNode(true);
-                form.appendChild(csrfClone);
+                            Swal.fire({
+                                title: evento.title || 'Cita Médica',
+                                html: htmlContent,
+                                icon: 'info',
+                                confirmButtonText: 'Entendido',
+                                customClass: { confirmButton: 'btn btn-primary rounded-pill px-4' },
+                                buttonsStyling: false
+                            });
+                        }
+                    });
+                    calendar.render();
+                } catch (error) {
+                    console.error('Error creando calendario:', error);
+                }
             }
             
-            document.body.appendChild(form);
-            form.submit();
+            // 3. Contador animado para métricas
+            const counters = document.querySelectorAll('.stat-counter, #citasPendientesCounter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent) || 0;
+                if (target > 0) animateCounter(counter.id || counter, target);
+            });
+        });
+        
+        function animateCounter(elementOrId, target) {
+            const element = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
+            if (!element) return;
+            let current = 0;
+            const increment = target / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 30);
         }
-    }
-    
-    /*]]>*/
-</script>
+        
+        // Funciones para manejo de citas
+        function verDetalleCita(citaId) { window.location.href = '/citas/' + citaId; }
+        function editarCita(citaId) { window.location.href = '/citas/editar/' + citaId; }
+        
+        // Función de Cancelar mejorada con SweetAlert2 Premium
+        function cancelarCita(citaId) {
+            Swal.fire({
+                title: '¿Cancelar esta cita?',
+                text: "Esta acción no se puede deshacer y el horario quedará libre.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cancelar cita',
+                cancelButtonText: 'Mantener cita',
+                customClass: { 
+                    confirmButton: 'btn btn-danger rounded-pill px-4 ms-2',
+                    cancelButton: 'btn btn-light rounded-pill px-4'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/citas/cancelar/' + citaId;
+                    form.style.display = 'none';
+                    
+                    const csrfInput = document.querySelector('input[name="_csrf"]');
+                    if (csrfInput) form.appendChild(csrfInput.cloneNode(true));
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+        /*]]>*/
+    </script>
 </body>
 </html>
